@@ -5,7 +5,7 @@ import config from "../config/config.js";
 import sessionModel from "../models/session.model.js";
 import otpModel from "../models/otp.model.js";
 import { sendEmail } from "../services/email.service.js";
-import { generateOtp, getOtpHtml } from "../utils/utils.js";
+import { generateOtp, getOtpHtml, setRefreshTokenCookie } from "../utils/utils.js";
 
 export async function register(req, res) {
   const { username, email, password } = req.body;
@@ -117,12 +117,7 @@ export async function login(req, res) {
     );
 
     // send refresh token as cookie
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    setRefreshTokenCookie(res, refreshToken);
     res.status(200).json({
       message: "Logged in successfully",
       accessToken: accessToken,
@@ -294,12 +289,7 @@ export async function refreshToken(req, res) {
   await session.save();
 
   // send new refresh token
-  res.cookie("refreshToken", newRefreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
+  setRefreshTokenCookie(res, newRefreshToken);
 
   res.status(200).json({
     message: "Access token refreshed successfully",

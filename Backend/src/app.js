@@ -10,9 +10,22 @@ import orderRouter from "./routes/private/order.routes.js";
 
 const app = express();
 
+// Comma-separated list of allowed frontend origins.
+// Defaults to local dev; set CORS_ORIGIN on Render to your Vercel URL(s),
+// e.g. CORS_ORIGIN=https://my-store.vercel.app
+const corsOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  : ["http://localhost:5173", "http://localhost:4173"];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:4173"],
+    origin: (origin, callback) => {
+      // Allow same-origin / non-browser requests (curl, health checks)
+      if (!origin || corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "credentials"],
     credentials: true,
