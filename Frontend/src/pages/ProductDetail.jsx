@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import useApp from "../hooks/useApp";
 import { StarRating } from "../components/StarRating";
 import { Skeleton } from "../components/Skeleton";
+import axios from "../api/axios";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -23,27 +24,24 @@ export default function ProductDetail() {
       setError(true);
       return;
     }
-    let cancelled = false;
+
     const fetchProduct = async () => {
       setLoading(true);
       setError(false);
       setProduct(null);
       try {
-        const res = await fetch(`/api/products/get-by-id/${id}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!cancelled) setProduct(data);
+        const res = await axios.get(`/products/get-by-id/${id}`);
+
+        const data = await res.data;
+        setProduct(data);
       } catch (err) {
         console.log("error:", err);
-        if (!cancelled) setError(true);
+        setError(true);
       } finally {
-        if (!cancelled) setLoading(false);
+        setLoading(false);
       }
     };
     fetchProduct();
-    return () => {
-      cancelled = true;
-    };
   }, [id]);
 
   useEffect(() => {
