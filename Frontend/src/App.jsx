@@ -27,14 +27,8 @@ import Verify from "./pages/Verify";
 
 function App() {
   const { loggedIn } = useAuth();
-  const {
-    darkMode,
-    wishlist,
-    toast,
-    setToast,
-    cartItems,
-    fetchCartItems,
-  } = useApp();
+  const { darkMode, wishlist, toast, setToast, cartItems, fetchCartItems } =
+    useApp();
 
   useEffect(() => {
     if (darkMode) {
@@ -47,7 +41,13 @@ function App() {
 
   // fetch user cart items
   useEffect(() => {
-    fetchCartItems();
+    console.log("logged in:", loggedIn);
+
+    if (loggedIn.status) {
+      fetchCartItems();
+    } else {
+      return;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // console.log("car items:", cartItems);

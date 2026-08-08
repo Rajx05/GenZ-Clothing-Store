@@ -18,7 +18,7 @@ import {
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
 
-const MotionIcon = motion(FontAwesomeIcon);
+const MotionIcon = motion.create(FontAwesomeIcon);
 
 export function Navbar() {
   // contexts
