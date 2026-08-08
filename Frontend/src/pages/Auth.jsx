@@ -215,19 +215,24 @@ export default function Auth() {
     setLoading(true);
     try {
       // Registers user in DB and sends OTP to the provided email
-      await fetch("api/auth/register", {
+      const res = await fetch("api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password }),
-      }).then((res) => {
-        if (!res.ok) throw new Error();
       });
+
+      if (res.status === 409) {
+        throw new Error("user already exists");
+      }
       setOtp(Array(6).fill(""));
       setErrors({});
       setResendTimer(60);
       setView("otp");
-    } catch {
-      setErrors({ general: "Failed to send OTP. Please try again." });
+    } catch (e) {
+      setToast({
+        message: `Error: ${e.message}`,
+        type: "failure",
+      });
     } finally {
       setLoading(false);
     }
@@ -325,10 +330,10 @@ export default function Auth() {
           <div className="relative z-10 text-white flex flex-col justify-between h-full max-w-sm">
             <div>
               <h2 className="font-display text-3xl font-bold tracking-wider mb-2">
-                ABC
+                Genz
               </h2>
               <p className="text-[10px] tracking-[0.4em] text-gray-400">
-                PREMIUM FASHION
+                PREMIUM & TRENDY
               </p>
             </div>
             <div className="my-16">
@@ -342,7 +347,7 @@ export default function Auth() {
               </p>
             </div>
             <p className="text-xs text-gray-500">
-              © 2026 ABC Store. Crafted with pride.
+              © 2026 GenZ Store. Crafted with pride.
             </p>
           </div>
         </div>
@@ -428,7 +433,10 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" />{" "}
+                          <FontAwesomeIcon
+                            icon={faSpinner}
+                            className="animate-spin"
+                          />{" "}
                           Processing...
                         </>
                       ) : (
@@ -439,7 +447,7 @@ export default function Auth() {
 
                   <div className="mt-8 text-center border-t border-gray-100 dark:border-gray-800 pt-6">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      New to ABC store?{" "}
+                      New to GenZ store?{" "}
                       <button
                         type="button"
                         onClick={switchToRegister}
@@ -555,13 +563,16 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> Sending
-                          OTP...
+                          <FontAwesomeIcon
+                            icon={faSpinner}
+                            className="animate-spin"
+                          />{" "}
+                          Sending OTP...
                         </>
                       ) : (
                         <>
-                          <FontAwesomeIcon icon={faEnvelope} className="mr-1" /> CONTINUE WITH
-                          OTP
+                          <FontAwesomeIcon icon={faEnvelope} className="mr-1" />{" "}
+                          CONTINUE WITH OTP
                         </>
                       )}
                     </motion.button>
@@ -597,7 +608,10 @@ export default function Auth() {
                     onClick={backToRegister}
                     className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition"
                   >
-                    <FontAwesomeIcon icon={faArrowLeft} className="text-[10px]" />
+                    <FontAwesomeIcon
+                      icon={faArrowLeft}
+                      className="text-[10px]"
+                    />
                     Back to Registration
                   </button>
 
@@ -638,13 +652,16 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" />{" "}
+                          <FontAwesomeIcon
+                            icon={faSpinner}
+                            className="animate-spin"
+                          />{" "}
                           Verifying...
                         </>
                       ) : (
                         <>
-                          <FontAwesomeIcon icon={faCircleCheck} /> VERIFY & CREATE
-                          ACCOUNT
+                          <FontAwesomeIcon icon={faCircleCheck} /> VERIFY &
+                          CREATE ACCOUNT
                         </>
                       )}
                     </motion.button>
