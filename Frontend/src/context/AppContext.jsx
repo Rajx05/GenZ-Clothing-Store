@@ -1,8 +1,8 @@
 import { createContext, useState, useCallback } from "react";
 import axios from "../api/axios.js";
 import useAuth from "../hooks/useAuth";
-import heroImgDesktop from "../images/hero.png";
-import heroImgMobile from "../images/jonas-horsch.jpg";
+import heroImgDesktop from "../images/hero.webp";
+import heroImgMobile from "../images/jonas-horsch.webp";
 import { useNavigate } from "react-router-dom";
 
 const AppContext = createContext({});

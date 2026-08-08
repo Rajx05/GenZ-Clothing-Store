@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faXmark,
+  faBars,
+  faMagnifyingGlass,
+  faSun,
+  faMoon,
+  faUser,
+  faBagShopping,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser as faUserRegular,
+  faHeart as faHeartRegular,
+} from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
+
+const MotionIcon = motion(FontAwesomeIcon);
 
 export function Navbar() {
   // contexts
@@ -56,9 +72,10 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
-              <i
-                className={`fas ${mobileMenuOpen ? "fa-times" : "fa-bars"} text-lg`}
-              ></i>
+              <FontAwesomeIcon
+                icon={mobileMenuOpen ? faXmark : faBars}
+                className="text-lg"
+              />
             </button>
 
             {/* Logo */}
@@ -67,7 +84,7 @@ export function Navbar() {
                 className="flex-shrink-0 cursor-pointer"
                 whileHover={{ scale: 1.02 }}
               >
-                <h1 className="font-display text-2xl md:text-3xl font-bold tracking-wider">
+                <h1 className="font-display font text-2xl md:text-3xl font-bold tracking-wider">
                   GenZ
                 </h1>
                 <p className="text-[9px] tracking-[0.35em] text-gray-500 dark:text-gray-400 -mt-1 hidden sm:block">
@@ -100,7 +117,7 @@ export function Navbar() {
                 onClick={() => setSearchOpen(!searchOpen)}
                 aria-label="Search"
               >
-                <i className="fas fa-search text-lg"></i>
+                <FontAwesomeIcon icon={faMagnifyingGlass} className="text-lg" />
               </motion.button>
 
               {/* Dark mode toggle */}
@@ -111,12 +128,13 @@ export function Navbar() {
                 onClick={toggleDark}
                 aria-label="Toggle dark mode"
               >
-                <motion.i
+                <MotionIcon
                   key={darkMode ? "sun" : "moon"}
                   initial={{ rotate: -90, opacity: 0 }}
                   animate={{ rotate: 0, opacity: 1 }}
-                  className={`fas ${darkMode ? "fa-sun text-yellow-400" : "fa-moon"} text-lg`}
-                ></motion.i>
+                  icon={darkMode ? faSun : faMoon}
+                  className={`${darkMode ? "text-yellow-400" : ""} text-lg`}
+                />
               </motion.button>
 
               {/* User Account / Profile */}
@@ -129,9 +147,10 @@ export function Navbar() {
                 }
                 aria-label="User Account"
               >
-                <i
-                  className={`${loggedIn.status ? "fas text-brand-600 dark:text-brand-400" : "far"} fa-user text-lg`}
-                ></i>
+                <FontAwesomeIcon
+                  icon={loggedIn.status ? faUser : faUserRegular}
+                  className={`${loggedIn.status ? "text-brand-600 dark:text-brand-400" : ""} text-lg`}
+                />
                 {loggedIn.status && (
                   <span className="absolute bottom-1 right-1 w-2 h-2 bg-emerald-500 rounded-full border border-white dark:border-gray-950"></span>
                 )}
@@ -145,7 +164,7 @@ export function Navbar() {
                 onClick={() => navigate("/wishlist")}
                 aria-label="Wishlist"
               >
-                <i className="far fa-heart text-lg"></i>
+                <FontAwesomeIcon icon={faHeartRegular} className="text-lg" />
                 {wishlist && wishlist.length > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold">
                     {wishlist.length}
@@ -161,7 +180,7 @@ export function Navbar() {
                 onClick={() => navigate("/my-cart")}
                 aria-label="Shopping cart"
               >
-                <i className="fas fa-shopping-bag text-lg"></i>
+                <FontAwesomeIcon icon={faBagShopping} className="text-lg" />
                 <AnimatePresence>
                   {totalItems > 0 && (
                     <motion.span
@@ -191,7 +210,10 @@ export function Navbar() {
               <div className="max-w-2xl mx-auto px-4 py-4">
                 <div className="flex items-center gap-3">
                   <form onSubmit={handleSearch} className="relative flex-1">
-                    <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <FontAwesomeIcon
+                      icon={faMagnifyingGlass}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    />
 
                     <input
                       type="text"
@@ -207,7 +229,7 @@ export function Navbar() {
                     className="px-4 py-3 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
                     onClick={() => setSearchOpen(false)}
                   >
-                    <i className="fa fa-solid fa-xmark"></i>
+                    <FontAwesomeIcon icon={faXmark} />
                   </button>
                 </div>
               </div>
@@ -238,7 +260,7 @@ export function Navbar() {
                 <div className="flex justify-between items-center mb-8">
                   <h2 className="font-display text-xl font-bold">Menu</h2>
                   <button onClick={() => setMobileMenuOpen(false)}>
-                    <i className="fas fa-times text-lg"></i>
+                    <FontAwesomeIcon icon={faXmark} className="text-lg" />
                   </button>
                 </div>
                 <nav className="flex flex-col gap-4">
@@ -257,14 +279,14 @@ export function Navbar() {
                     className="text-lg font-medium py-2 border-b border-gray-100 dark:border-gray-800 hover:text-brand-700 dark:hover:text-brand-400 transition flex items-center gap-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <i className="far fa-heart"></i> Wishlist
+                    <FontAwesomeIcon icon={faHeartRegular} /> Wishlist
                   </Link>
                   <Link
                     to={loggedIn ? "/profile" : "/login"}
                     className="text-lg font-medium py-2 border-b border-gray-100 dark:border-gray-800 hover:text-brand-700 dark:hover:text-brand-400 transition flex items-center gap-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <i className="far fa-user"></i>{" "}
+                    <FontAwesomeIcon icon={faUserRegular} />{" "}
                     {loggedIn ? "My Profile" : "Login / Register"}
                   </Link>
                 </nav>
@@ -276,7 +298,7 @@ export function Navbar() {
                     }}
                     className="flex items-center gap-3 text-sm font-medium"
                   >
-                    <i className={`fas ${darkMode ? "fa-sun" : "fa-moon"}`}></i>
+                    <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
                     {darkMode ? "Light Mode" : "Dark Mode"}
                   </button>
                 </div>

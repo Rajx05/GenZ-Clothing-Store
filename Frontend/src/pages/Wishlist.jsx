@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { PRODUCTS } from "../data/constants";
 import { ProductCard } from "../components/ProductCard";
@@ -47,7 +49,7 @@ export default function Wishlist() {
               className="text-center py-20 max-w-md mx-auto"
             >
               <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 dark:text-gray-600 shadow-inner">
-                <i className="far fa-heart text-3xl"></i>
+                <FontAwesomeIcon icon={faHeartRegular} className="text-3xl" />
               </div>
               <h2 className="text-xl font-semibold mb-2">
                 Your wishlist is empty

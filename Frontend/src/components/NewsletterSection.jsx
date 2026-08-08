@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 export function NewsletterSection() {
   const [email, setEmail] = useState("");
@@ -58,7 +60,8 @@ export function NewsletterSection() {
             >
               {subscribed ? (
                 <>
-                  <i className="fas fa-check mr-2"></i>SUBSCRIBED!
+                  <FontAwesomeIcon icon={faCheck} className="mr-2" />
+                  SUBSCRIBED!
                 </>
               ) : (
                 "SUBSCRIBE"

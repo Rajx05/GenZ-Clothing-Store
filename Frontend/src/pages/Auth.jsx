@@ -2,6 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "../api/axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSpinner,
+  faEnvelope,
+  faArrowLeft,
+  faEnvelopeOpenText,
+  faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
 
@@ -420,7 +428,7 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <i className="fas fa-spinner animate-spin" />{" "}
+                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" />{" "}
                           Processing...
                         </>
                       ) : (
@@ -547,12 +555,12 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <i className="fas fa-spinner animate-spin" /> Sending
+                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> Sending
                           OTP...
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-envelope mr-1" /> CONTINUE WITH
+                          <FontAwesomeIcon icon={faEnvelope} className="mr-1" /> CONTINUE WITH
                           OTP
                         </>
                       )}
@@ -589,14 +597,17 @@ export default function Auth() {
                     onClick={backToRegister}
                     className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mb-6 transition"
                   >
-                    <i className="fas fa-arrow-left text-[10px]" />
+                    <FontAwesomeIcon icon={faArrowLeft} className="text-[10px]" />
                     Back to Registration
                   </button>
 
                   {/* Icon + heading */}
                   <div className="mb-8 text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-100 dark:bg-gray-800 mb-4">
-                      <i className="fas fa-envelope-open-text text-2xl text-brand-600 dark:text-brand-400" />
+                      <FontAwesomeIcon
+                        icon={faEnvelopeOpenText}
+                        className="text-2xl text-brand-600 dark:text-brand-400"
+                      />
                     </div>
                     <h2 className="font-display text-3xl font-bold text-gray-900 dark:text-white">
                       Verify Your Email
@@ -627,12 +638,12 @@ export default function Auth() {
                     >
                       {loading ? (
                         <>
-                          <i className="fas fa-spinner animate-spin" />{" "}
+                          <FontAwesomeIcon icon={faSpinner} className="animate-spin" />{" "}
                           Verifying...
                         </>
                       ) : (
                         <>
-                          <i className="fas fa-check-circle" /> VERIFY & CREATE
+                          <FontAwesomeIcon icon={faCircleCheck} /> VERIFY & CREATE
                           ACCOUNT
                         </>
                       )}

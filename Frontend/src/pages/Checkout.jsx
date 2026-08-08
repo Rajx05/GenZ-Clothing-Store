@@ -1,4 +1,6 @@
 import { useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import useApp from "../hooks/useApp";
 
 export default function Checkout() {
@@ -17,7 +19,11 @@ export default function Checkout() {
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
       <div className="w-16 h-16 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center mb-6">
-        <i className="fas fa-spinner fa-spin text-brand-600 dark:text-brand-400 text-2xl"></i>
+        <FontAwesomeIcon
+          icon={faSpinner}
+          spin
+          className="text-brand-600 dark:text-brand-400 text-2xl"
+        />
       </div>
       <h1 className="font-display text-2xl font-bold mb-2">
         Preparing secure checkout&hellip;

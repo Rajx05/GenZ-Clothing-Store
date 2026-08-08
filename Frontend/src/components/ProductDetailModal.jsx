@@ -1,5 +1,13 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faXmark,
+  faMinus,
+  faPlus,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useApp } from "../context/AppContext";
 import { StarRating } from "./StarRating";
 
@@ -72,7 +80,7 @@ export function ProductDetailModal() {
                 onClick={() => setSelectedProduct(null)}
                 className="absolute top-4 right-4 w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition z-10"
               >
-                <i className="fas fa-times"></i>
+                <FontAwesomeIcon icon={faXmark} />
               </button>
 
               <span className="text-xs tracking-[0.2em] text-brand-600 dark:text-brand-400 font-medium">
@@ -161,7 +169,7 @@ export function ProductDetailModal() {
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                   >
-                    <i className="fas fa-minus text-xs"></i>
+                    <FontAwesomeIcon icon={faMinus} className="text-xs" />
                   </button>
                   <span className="w-10 text-center font-semibold">
                     {quantity}
@@ -170,7 +178,7 @@ export function ProductDetailModal() {
                     onClick={() => setQuantity(quantity + 1)}
                     className="w-10 h-10 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                   >
-                    <i className="fas fa-plus text-xs"></i>
+                    <FontAwesomeIcon icon={faPlus} className="text-xs" />
                   </button>
                 </div>
               </div>
@@ -200,9 +208,10 @@ export function ProductDetailModal() {
                       : "border-gray-200 dark:border-gray-700"
                   }`}
                 >
-                  <i
-                    className={`${isWished ? "fas text-red-500" : "far"} fa-heart text-lg`}
-                  ></i>
+                  <FontAwesomeIcon
+                    icon={isWished ? faHeart : faHeartRegular}
+                    className={`${isWished ? "text-red-500" : ""} text-lg`}
+                  />
                 </motion.button>
               </div>
             </div>

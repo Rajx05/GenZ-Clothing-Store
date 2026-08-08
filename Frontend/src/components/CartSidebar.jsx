@@ -1,5 +1,14 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faXmark,
+  faBagShopping,
+  faMinus,
+  faPlus,
+  faTrashCan,
+  faLock,
+} from "@fortawesome/free-solid-svg-icons";
 import useApp from "../hooks/useApp";
 import { useNavigate } from "react-router-dom";
 import { CartItemSkeleton } from "./Skeleton";
@@ -53,7 +62,7 @@ export function CartSidebar() {
                 onClick={() => setCartOpen(false)}
                 className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition"
               >
-                <i className="fas fa-times"></i>
+                <FontAwesomeIcon icon={faXmark} />
               </button>
             </div>
 
@@ -88,7 +97,10 @@ export function CartSidebar() {
                 </div>
               ) : cartItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                  <i className="fas fa-shopping-bag text-5xl text-gray-200 dark:text-gray-700 mb-4"></i>
+                  <FontAwesomeIcon
+                    icon={faBagShopping}
+                    className="text-5xl text-gray-200 dark:text-gray-700 mb-4"
+                  />
                   <p className="font-semibold text-lg mb-1">
                     Your bag is empty
                   </p>
@@ -147,7 +159,7 @@ export function CartSidebar() {
                                 }
                                 className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                               >
-                                <i className="fas fa-minus text-[10px]"></i>
+                                <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
                               </button>
                               <span className="text-sm font-medium w-6 text-center">
                                 {item.quantity}
@@ -158,7 +170,7 @@ export function CartSidebar() {
                                 }
                                 className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                               >
-                                <i className="fas fa-plus text-[10px]"></i>
+                                <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
                               </button>
                             </div>
                             <div className="flex items-center gap-3">
@@ -169,7 +181,7 @@ export function CartSidebar() {
                                 onClick={() => removeFromCart(item._id)}
                                 className="text-gray-400 hover:text-red-500 transition"
                               >
-                                <i className="fas fa-trash-alt text-xs"></i>
+                                <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
                               </button>
                             </div>
                           </div>
@@ -216,8 +228,8 @@ export function CartSidebar() {
                   CHECKOUT — ${total.toFixed(2)}
                 </motion.button>
                 <p className="text-[10px] text-center text-gray-400 mt-3">
-                  <i className="fas fa-lock mr-1"></i> Secure checkout powered
-                  by Razorpay
+                  <FontAwesomeIcon icon={faLock} className="mr-1" /> Secure
+                  checkout powered by Razorpay
                 </p>
               </div>
             )}

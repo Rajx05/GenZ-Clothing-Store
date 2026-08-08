@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import App from "./App.jsx";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import "./index.css";
 import PersistLogin from "./components/PersistentLogin.jsx";
 import { AppProvider } from "./context/AppContext.jsx";

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { ProductCard } from "./ProductCard";
 import { ProductCardSkeleton } from "./Skeleton";
 import useInfiniteProducts from "../hooks/useInfiniteProducts";
@@ -111,7 +113,10 @@ export function ProductGrid() {
             animate={{ opacity: 1 }}
             className="text-center py-20"
           >
-            <i className="fas fa-box-open text-4xl text-gray-300 dark:text-gray-600 mb-4"></i>
+            <FontAwesomeIcon
+              icon={faBoxOpen}
+              className="text-4xl text-gray-300 dark:text-gray-600 mb-4"
+            />
             <p className="text-gray-500">No products found in this category.</p>
           </motion.div>
         ) : (

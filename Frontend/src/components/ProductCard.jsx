@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { StarRating } from "./StarRating";
 
@@ -62,9 +65,10 @@ export function ProductCard({ product, index }) {
           }}
           className="absolute top-3 right-3 w-9 h-9 bg-white/90 dark:bg-gray-900/90 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         >
-          <i
-            className={`${isWished ? "fas text-red-500" : "far text-gray-600 dark:text-gray-300"} fa-heart text-sm`}
-          ></i>
+          <FontAwesomeIcon
+            icon={isWished ? faHeart : faHeartRegular}
+            className={`${isWished ? "text-red-500" : "text-gray-600 dark:text-gray-300"} text-sm`}
+          />
         </motion.button>
 
         {/* Quick Add */}

@@ -1,24 +1,23 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTruckFast,
+  faRotateLeft,
+  faShieldHalved,
+  faHeadset,
+} from "@fortawesome/free-solid-svg-icons";
 
 export function FeaturesBar() {
   const features = [
+    { icon: faTruckFast, title: "Free Shipping", desc: "On orders over $150" },
+    { icon: faRotateLeft, title: "Easy Returns", desc: "30-day return policy" },
     {
-      icon: "fa-truck-fast",
-      title: "Free Shipping",
-      desc: "On orders over $150",
-    },
-    {
-      icon: "fa-rotate-left",
-      title: "Easy Returns",
-      desc: "30-day return policy",
-    },
-    {
-      icon: "fa-shield-halved",
+      icon: faShieldHalved,
       title: "Secure Payment",
       desc: "100% protected",
     },
-    { icon: "fa-headset", title: "24/7 Support", desc: "Always here to help" },
+    { icon: faHeadset, title: "24/7 Support", desc: "Always here to help" },
   ];
 
   return (
@@ -35,9 +34,10 @@ export function FeaturesBar() {
               className="flex items-center gap-3 md:justify-center"
             >
               <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
-                <i
-                  className={`fas ${f.icon} text-brand-700 dark:text-brand-400`}
-                ></i>
+                <FontAwesomeIcon
+                  icon={f.icon}
+                  className="text-brand-700 dark:text-brand-400"
+                />
               </div>
               <div>
                 <p className="font-semibold text-sm">{f.title}</p>

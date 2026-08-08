@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleExclamation,
+  faChevronRight,
+  faArrowLeft,
+  faMinus,
+  faPlus,
+  faBagShopping,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { StarRating } from "../components/StarRating";
 import { Skeleton } from "../components/Skeleton";
@@ -98,7 +109,10 @@ export default function ProductDetail() {
   if (error || !product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-        <i className="fas fa-exclamation-circle text-5xl text-red-500 mb-4 animate-bounce"></i>
+        <FontAwesomeIcon
+          icon={faCircleExclamation}
+          className="text-5xl text-red-500 mb-4 animate-bounce"
+        />
         <h2 className="text-2xl font-bold font-display mb-4">
           Product Not Found
         </h2>
@@ -133,21 +147,21 @@ export default function ProductDetail() {
           >
             Home
           </Link>
-          <i className="fas fa-chevron-right text-[9px]"></i>
+          <FontAwesomeIcon icon={faChevronRight} className="text-[9px]" />
           <Link
             to="/shop"
             className="hover:text-brand-600 dark:hover:text-brand-400 transition"
           >
             Shop
           </Link>
-          <i className="fas fa-chevron-right text-[9px]"></i>
+          <FontAwesomeIcon icon={faChevronRight} className="text-[9px]" />
           <Link
             to={`/shop?category=${product.category}`}
             className="hover:text-brand-600 dark:hover:text-brand-400 transition"
           >
             {product.category}
           </Link>
-          <i className="fas fa-chevron-right text-[9px]"></i>
+          <FontAwesomeIcon icon={faChevronRight} className="text-[9px]" />
           <span className="font-medium text-gray-900 dark:text-white truncate">
             {product.name}
           </span>
@@ -158,7 +172,10 @@ export default function ProductDetail() {
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-xs font-semibold mb-4 hover:text-brand-600 dark:hover:text-brand-400 transition group"
         >
-          <i className="fas fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
+          <FontAwesomeIcon
+            icon={faArrowLeft}
+            className="transition-transform group-hover:-translate-x-1"
+          />
           Back
         </button>
 
@@ -282,7 +299,7 @@ export default function ProductDetail() {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 >
-                  <i className="fas fa-minus text-[9px]"></i>
+                  <FontAwesomeIcon icon={faMinus} className="text-[9px]" />
                 </button>
                 <span className="w-8 text-center text-sm font-semibold">
                   {quantity}
@@ -291,7 +308,7 @@ export default function ProductDetail() {
                   onClick={() => setQuantity(quantity + 1)}
                   className="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                 >
-                  <i className="fas fa-plus text-[9px]"></i>
+                  <FontAwesomeIcon icon={faPlus} className="text-[9px]" />
                 </button>
               </div>
             </div>
@@ -311,7 +328,7 @@ export default function ProductDetail() {
                 }
                 className="flex-1 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl font-semibold text-xs tracking-wide hover:bg-gray-800 dark:hover:bg-gray-100 transition shadow-lg flex items-center justify-center gap-2"
               >
-                <i className="fas fa-shopping-bag text-xs"></i>
+                <FontAwesomeIcon icon={faBagShopping} className="text-xs" />
                 ADD TO BAG — ${(product.price * quantity).toFixed(2)}
               </motion.button>
 
@@ -326,9 +343,10 @@ export default function ProductDetail() {
                 }`}
                 aria-label="Add to Wishlist"
               >
-                <i
-                  className={`${isWished ? "fas text-red-500" : "far"} fa-heart text-sm`}
-                ></i>
+                <FontAwesomeIcon
+                  icon={isWished ? faHeart : faHeartRegular}
+                  className={`${isWished ? "text-red-500" : ""} text-sm`}
+                />
               </motion.button>
             </div>
           </div>

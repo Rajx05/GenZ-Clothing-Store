@@ -1,6 +1,20 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChartPie,
+  faHeart,
+  faUserCog,
+  faCheck,
+  faCircleCheck,
+  faCircleQuestion,
+  faRightFromBracket,
+  faBagShopping,
+  faDollarSign,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
 import { PRODUCTS } from "../data/constants";
@@ -9,9 +23,9 @@ import { StatCardSkeleton } from "../components/Skeleton";
 const spring = { type: "spring", stiffness: 260, damping: 24 };
 
 const NAV_ITEMS = [
-  { id: "overview", label: "Overview", icon: "fas fa-chart-pie" },
-  { id: "wishlist", label: "Wishlist", icon: "fas fa-heart" },
-  { id: "settings", label: "Settings", icon: "fas fa-user-cog" },
+  { id: "overview", label: "Overview", icon: faChartPie },
+  { id: "wishlist", label: "Wishlist", icon: faHeart },
+  { id: "settings", label: "Settings", icon: faUserCog },
 ];
 
 const getInitials = (username) =>
@@ -38,7 +52,7 @@ function Avatar({ user, size = "md" }) {
       </div>
       {isVerified && (
         <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-white dark:border-gray-900">
-          <i className="fas fa-check text-[10px]"></i>
+          <FontAwesomeIcon icon={faCheck} className="text-[10px]" />
         </div>
       )}
     </div>
@@ -66,7 +80,9 @@ function Sidebar({ user, active, onSelect, onLogout }) {
                 : "text-amber-600 dark:text-amber-400"
             }`}
           >
-            <i className={`fas ${isVerified ? "fa-circle-check" : "fa-circle-question"}`}></i>
+            <FontAwesomeIcon
+              icon={isVerified ? faCircleCheck : faCircleQuestion}
+            />
             {isVerified ? "Email Verified" : "Email Not Verified"}
           </p>
         </div>
@@ -90,7 +106,7 @@ function Sidebar({ user, active, onSelect, onLogout }) {
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               }`}
             >
-              <i className={`${item.icon} w-4 text-center`}></i>
+              <FontAwesomeIcon icon={item.icon} className="w-4 text-center" />
               {item.label}
             </button>
           );
@@ -107,7 +123,7 @@ function Sidebar({ user, active, onSelect, onLogout }) {
         onClick={onLogout}
         className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-red-500/40 text-red-500 text-xs font-semibold tracking-wider hover:bg-red-500 hover:text-white transition-colors duration-300"
       >
-        <i className="fas fa-sign-out-alt"></i>
+        <FontAwesomeIcon icon={faRightFromBracket} />
         LOGOUT ACCOUNT
       </motion.button>
     </div>
@@ -131,7 +147,7 @@ function MobileTabBar({ active, onSelect }) {
                 : "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400"
             }`}
           >
-            <i className={item.icon}></i>
+            <FontAwesomeIcon icon={item.icon} />
             {item.label}
           </button>
         );
@@ -153,7 +169,7 @@ function StatCard({ icon, iconCls, value, label, index = 0 }) {
           iconCls || ""
         }`}
       >
-        <i className={icon}></i>
+        <FontAwesomeIcon icon={icon} />
       </div>
       <p className="mt-4 text-2xl font-display font-bold text-gray-900 dark:text-gray-100">
         {value}
@@ -169,25 +185,25 @@ function OverviewPanel({ user, stats, onSelect, cartLoading }) {
   const isVerified = Boolean(user?.verified);
   const cards = [
     {
-      icon: "fas fa-shopping-bag",
+      icon: faBagShopping,
       value: stats.cartCount,
       label: "Cart Items",
       iconCls: "",
     },
     {
-      icon: "fas fa-dollar-sign",
+      icon: faDollarSign,
       value: `$${stats.cartSubtotal.toFixed(2)}`,
       label: "Cart Subtotal",
       iconCls: "",
     },
     {
-      icon: "fas fa-heart",
+      icon: faHeart,
       value: stats.wishlistCount,
       label: "Wishlist Items",
       iconCls: "",
     },
     {
-      icon: isVerified ? "fas fa-circle-check" : "fas fa-circle-question",
+      icon: isVerified ? faCircleCheck : faCircleQuestion,
       value: isVerified ? "Verified" : "Pending",
       label: "Email Status",
       iconCls: isVerified
@@ -323,7 +339,7 @@ function WishlistPanel({ wishedProducts, wishlistCount }) {
         ) : (
           <div className="text-center py-16 max-w-md mx-auto">
             <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400 dark:text-gray-600 shadow-inner">
-              <i className="far fa-heart text-3xl"></i>
+              <FontAwesomeIcon icon={faHeartRegular} className="text-3xl" />
             </div>
             <h2 className="text-xl font-semibold mb-2">Your wishlist is empty</h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 leading-relaxed">
@@ -352,7 +368,7 @@ function WishlistPanel({ wishedProducts, wishlistCount }) {
             to="/wishlist"
             className="inline-flex items-center gap-2 text-sm font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
           >
-            View full wishlist <i className="fas fa-arrow-right text-xs"></i>
+            View full wishlist <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
           </Link>
         </motion.div>
       )}

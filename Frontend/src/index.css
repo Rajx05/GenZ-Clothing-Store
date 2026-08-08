@@ -19,7 +19,11 @@
   }
 
   .hero-overlay {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
   }
 
   .btn-ripple {
@@ -41,8 +45,12 @@
 
   /* Custom Animations */
   @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-33.33%); }
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.33%);
+    }
   }
 
   .animate-marquee {
@@ -56,7 +64,7 @@
   }
 
   .mobile-menu-overlay {
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
   }
 
   .star-filled {

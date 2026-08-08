@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons';
 
 export function BackToTop() {
     const [visible, setVisible] = useState(false);
@@ -23,7 +25,7 @@ export function BackToTop() {
                     className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full shadow-2xl flex items-center justify-center"
                     aria-label="Back to top"
                 >
-                    <i className="fas fa-arrow-up"></i>
+                    <FontAwesomeIcon icon={faArrowUp} />
                 </motion.button>
             )}
         </AnimatePresence>

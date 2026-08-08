@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCircleCheck,
+  faCircleExclamation,
+  faXmark,
+} from '@fortawesome/free-solid-svg-icons';
 
 export function Toast({ message, type, onClose }) {
     useEffect(() => {
@@ -15,9 +21,13 @@ export function Toast({ message, type, onClose }) {
             className={`fixed top-24 right-4 z-[100] px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 
                 ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
         >
-            <i className={`fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}`}></i>
+            <FontAwesomeIcon
+              icon={type === 'success' ? faCircleCheck : faCircleExclamation}
+            />
             <span className="font-medium text-sm">{message}</span>
-            <button onClick={onClose} className="ml-2 hover:opacity-70"><i className="fas fa-times"></i></button>
+            <button onClick={onClose} className="ml-2 hover:opacity-70">
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
         </motion.div>
     );
 }

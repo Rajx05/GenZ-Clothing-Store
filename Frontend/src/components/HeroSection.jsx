@@ -9,11 +9,16 @@ export function HeroSection() {
   return (
     <section className="relative h-[70vh] md:h-[85vh] overflow-hidden">
       <picture>
-        <source media="(max-width: 768px)" srcSet={heroImgMobile} />
+        <source
+          media="(max-width: 768px)"
+          srcSet={heroImgMobile}
+          fetchPriority="high"
+        />
 
         <img
           src={heroImgDesktop}
           alt="Hero fashion"
+          fetchPriority="high"
           className="absolute inset-0 w-full h-full object-cover"
         />
       </picture>

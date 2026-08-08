@@ -1,5 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 export function InstagramSection() {
   const images = [
@@ -45,7 +47,10 @@ export function InstagramSection() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all flex items-center justify-center">
-                <i className="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"></i>
+                <FontAwesomeIcon
+                  icon={faInstagram}
+                  className="text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+                />
               </div>
             </motion.div>
           ))}

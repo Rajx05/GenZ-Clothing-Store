@@ -1,5 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faInstagram,
+  faTwitter,
+  faFacebookF,
+  faPinterestP,
+  faTiktok,
+  faCcVisa,
+  faCcMastercard,
+  faCcAmex,
+  faCcApplePay,
+  faGooglePay,
+} from "@fortawesome/free-brands-svg-icons";
 
 export function Footer() {
   const shopLinks = [
@@ -27,18 +40,18 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               {[
-                "fa-instagram",
-                "fa-twitter",
-                "fa-facebook-f",
-                "fa-pinterest-p",
-                "fa-tiktok",
-              ].map((icon) => (
+                faInstagram,
+                faTwitter,
+                faFacebookF,
+                faPinterestP,
+                faTiktok,
+              ].map((icon, idx) => (
                 <a
-                  key={icon}
+                  key={idx}
                   href="#"
                   className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center hover:bg-brand-600 hover:text-white transition text-sm"
                 >
-                  <i className={`fab ${icon}`}></i>
+                  <FontAwesomeIcon icon={icon} />
                 </a>
               ))}
             </div>
@@ -110,11 +123,20 @@ export function Footer() {
             © 2026 GenZ All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <i className="fab fa-cc-visa text-2xl text-gray-400"></i>
-            <i className="fab fa-cc-mastercard text-2xl text-gray-400"></i>
-            <i className="fab fa-cc-amex text-2xl text-gray-400"></i>
-            <i className="fab fa-cc-apple-pay text-2xl text-gray-400"></i>
-            <i className="fab fa-google-pay text-2xl text-gray-400"></i>
+            <FontAwesomeIcon icon={faCcVisa} className="text-2xl text-gray-400" />
+            <FontAwesomeIcon
+              icon={faCcMastercard}
+              className="text-2xl text-gray-400"
+            />
+            <FontAwesomeIcon icon={faCcAmex} className="text-2xl text-gray-400" />
+            <FontAwesomeIcon
+              icon={faCcApplePay}
+              className="text-2xl text-gray-400"
+            />
+            <FontAwesomeIcon
+              icon={faGooglePay}
+              className="text-2xl text-gray-400"
+            />
           </div>
         </div>
       </div>
