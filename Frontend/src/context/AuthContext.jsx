@@ -1,5 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "../api/axios";
+import { setAuthState } from "../api/axiosPrivate";
 
 const AuthContext = createContext({});
 
@@ -13,6 +14,14 @@ export const AuthProvider = ({ children }) => {
     status: false,
     user: {},
   });
+
+  // Bridge auth state to the axiosPrivate singleton so its interceptors
+  // always read the CURRENT token at request time (fixes stale closure in
+  // Razorpay callbacks / async handlers that would otherwise send an expired
+  // or missing token and get a 401).
+  useEffect(() => {
+    setAuthState(auth?.accessToken, setAuth);
+  }, [auth?.accessToken, setAuth]);
 
   //------------------------------- functions -------------------------------//
 
@@ -28,6 +37,7 @@ export const AuthProvider = ({ children }) => {
       console.log("error logging out ", error);
     }
   };
+
   return (
     <AuthContext.Provider
       value={{

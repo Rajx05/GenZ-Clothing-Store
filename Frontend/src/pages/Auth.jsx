@@ -330,7 +330,7 @@ export default function Auth() {
           <div className="relative z-10 text-white flex flex-col justify-between h-full max-w-sm">
             <div>
               <h2 className="font-display text-3xl font-bold tracking-wider mb-2">
-                Genz
+                GenZ
               </h2>
               <p className="text-[10px] tracking-[0.4em] text-gray-400">
                 PREMIUM & TRENDY

@@ -1,6 +1,6 @@
 import { createContext, useState, useCallback } from "react";
 import axios from "../api/axios.js";
-import useAuth from "../hooks/useAuth";
+import axiosPrivate from "../api/axiosPrivate";
 import heroImgDesktop from "../images/hero.webp";
 import heroImgMobile from "../images/jonas-horsch.webp";
 import { useNavigate } from "react-router-dom";
@@ -44,9 +44,6 @@ function disposeRazorpay() {
 }
 
 export const AppProvider = ({ children }) => {
-  // auth contexts
-  const { auth } = useAuth();
-
   const navigate = useNavigate();
 
   // Dark mode
@@ -107,11 +104,7 @@ export const AppProvider = ({ children }) => {
   const fetchCartItems = useCallback(async () => {
     setCartLoading(true);
     try {
-      const response = await axios.get("/cart/get-cart/", {
-        headers: {
-          Authorization: `Bearer ${auth.accessToken}`,
-        },
-      });
+      const response = await axiosPrivate.get("/cart/get-cart/");
       setCartItems(response.data.items);
     } catch (error) {
       console.log("Error fetching cart items from the server: ", error);
@@ -125,20 +118,12 @@ export const AppProvider = ({ children }) => {
     async (productId, quantity = 1, size, color) => {
       // console.log("access token:", auth.accessToken);
       try {
-        const response = await axios.post(
-          "/cart/add-to-cart/",
-          {
-            productId,
-            quantity,
-            size,
-            color,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${auth.accessToken}`,
-            },
-          },
-        );
+        const response = await axiosPrivate.post("/cart/add-to-cart/", {
+          productId,
+          quantity,
+          size,
+          color,
+        });
         console.log("product:", response.data.product);
         const newProduct = response.data.product;
 
@@ -182,33 +167,31 @@ export const AppProvider = ({ children }) => {
       ),
     );
     try {
-      await axios.put(
-        "/cart/update-quantity",
-        { itemId, quantity: newQty },
-        { headers: { Authorization: `Bearer ${auth.accessToken}` } },
-      );
+      await axiosPrivate.put("/cart/update-quantity", {
+        itemId,
+        quantity: newQty,
+      });
     } catch (error) {
       console.error("Failed to update quantity", error);
       fetchCartItems(); // roll back to the server's version
     }
   };
 
-  const removeFromCart = useCallback(async (productId) => {
-    // console.log(productId);
-    // console.log(auth.accessToken);
-    setCartItems((prev) => prev.filter((item) => item._id !== productId));
+  const removeFromCart = useCallback(
+    async (productId) => {
+      // console.log(productId);
+      // console.log(auth.accessToken);
+      setCartItems((prev) => prev.filter((item) => item._id !== productId));
 
-    await axios.delete("/cart/remove-from-cart", {
-      headers: {
-        Authorization: `Bearer ${auth.accessToken}`,
-      },
-      data: {
-        productId,
-      },
-    });
-    setToast({ message: "Item removed from bag", type: "success" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      await axiosPrivate.delete("/cart/remove-from-cart", {
+        data: {
+          productId,
+        },
+      });
+      setToast({ message: "Item removed from bag", type: "success" });
+    },
+    [],
+  );
 
   // Wishlist functions
   const toggleWishlist = useCallback((productId) => {
@@ -254,19 +237,11 @@ export const AppProvider = ({ children }) => {
 
   const paymentVerification = useCallback(async (order) => {
     try {
-      const response = await axios.post(
-        "/order/verify",
-        {
-          razorpay_order_id: order.razorpay_order_id,
-          razorpay_payment_id: order.razorpay_payment_id,
-          razorpay_signature: order.razorpay_signature,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
-          },
-        },
-      );
+      const response = await axiosPrivate.post("/order/verify", {
+        razorpay_order_id: order.razorpay_order_id,
+        razorpay_payment_id: order.razorpay_payment_id,
+        razorpay_signature: order.razorpay_signature,
+      });
 
       if (response.data?.status === "ok") {
         // Payment succeeded — drop the script + global so memory is freed
@@ -295,17 +270,9 @@ export const AppProvider = ({ children }) => {
   const createOrder = useCallback(async (cartItems) => {
     setOrderLoading(true);
     try {
-      const response = await axios.post(
-        "/order/create",
-        {
-          cartItems,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
-          },
-        },
-      );
+      const response = await axiosPrivate.post("/order/create", {
+        cartItems,
+      });
       setOrder(response.data.order);
       await displayRazorpay(response.data.order);
     } catch (error) {

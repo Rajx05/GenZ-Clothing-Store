@@ -3,6 +3,7 @@ import { motion, AnimatePresence, animate } from "framer-motion";
 import { Link } from "react-router-dom";
 import useApp from "../hooks/useApp";
 import { CartItemSkeleton, Skeleton } from "../components/Skeleton";
+import useAuth from "../hooks/useAuth";
 
 const spring = { type: "spring", stiffness: 260, damping: 24 };
 
@@ -32,11 +33,15 @@ export default function MyCart() {
     updateQuantity,
   } = useApp();
 
+  const { auth, loggedIn } = useAuth();
+
   // fetch user cart items
   useEffect(() => {
-    fetchCartItems();
+    if (loggedIn.status) {
+      fetchCartItems();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [auth]);
 
   // Skeleton while the first cart fetch is in flight
   if (cartLoading && (!cartItems || cartItems.length === 0)) {

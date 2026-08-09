@@ -41,8 +41,6 @@ function App() {
 
   // fetch user cart items
   useEffect(() => {
-    console.log("logged in:", loggedIn);
-
     if (loggedIn.status) {
       fetchCartItems();
     } else {

@@ -7,8 +7,6 @@ export default function Checkout() {
   const { cartItems, createOrder, orderLoading } = useApp();
   const firedRef = useRef(false);
 
-  // Create the order once — React 18 StrictMode double-mounts effects in dev,
-  // which would otherwise fire createOrder twice (duplicate orders/popups).
   useEffect(() => {
     if (firedRef.current) return;
     firedRef.current = true;

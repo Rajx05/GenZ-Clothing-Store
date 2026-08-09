@@ -22,11 +22,18 @@ function PersistLogin({ children }) {
             status: true,
             user: response.data.user,
           });
+          console.log("logged in!");
+          // console.log("auth", auth);
         }
       } catch {
         console.log("No valid session");
-        // } finally {
-        //   setLoading(false);
+        setLoggedIn({
+          status: false,
+          user: {},
+        });
+        // setLoading(false);
+      } finally {
+        // setLoading(false);
       }
     };
 
