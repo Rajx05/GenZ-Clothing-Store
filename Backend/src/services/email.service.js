@@ -9,7 +9,7 @@ export const sendEmail = async (to, subject, text, html) => {
       method: "POST",
       headers: {
         accept: "application/json",
-        "api-key": "",
+        "api-key": `${config.BREVO_API}`,
         "content-type": "application/json",
       },
       body: JSON.stringify({
