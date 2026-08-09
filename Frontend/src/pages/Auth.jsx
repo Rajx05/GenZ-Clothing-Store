@@ -214,11 +214,10 @@ export default function Auth() {
     if (!validateRegisterForm()) return;
     setLoading(true);
     try {
-      // Registers user in DB and sends OTP to the provided email
-      const res = await fetch("api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+      const res = await axios.post("/auth/register", {
+        username: username,
+        email: email,
+        password: password,
       });
 
       if (res.status === 409) {
