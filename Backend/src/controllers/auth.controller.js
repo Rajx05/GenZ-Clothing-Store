@@ -9,6 +9,9 @@ import { generateOtp, getOtpHtml, setRefreshTokenCookie } from "../utils/utils.j
 
 export async function register(req, res) {
   const { username, email, password } = req.body;
+  const role = ["buyer", "seller"].includes(req.body.role)
+    ? req.body.role
+    : "buyer";
 
   const isRegistered = await userModel.findOne({
     $or: [{ email: email }, { username: username }],
@@ -31,6 +34,7 @@ export async function register(req, res) {
     username,
     email,
     password: hashedPassword,
+    role,
   });
 
   const otp = generateOtp();
@@ -53,6 +57,7 @@ export async function register(req, res) {
       username: user.username,
       email: user.email,
       verified: user.verified,
+      role: user.role,
     },
   });
 }
@@ -124,6 +129,8 @@ export async function login(req, res) {
       user: {
         email: user.email,
         username: user.username,
+        verified: user.verified,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -222,6 +229,7 @@ export async function verifyOtp(req, res) {
       username: user.username,
       email: user.email,
       verified: user.verified,
+      role: user.role,
     },
   });
 }
@@ -298,6 +306,7 @@ export async function refreshToken(req, res) {
       username: user.username,
       email: user.email,
       verified: user.verified,
+      role: user.role,
     },
   });
 }
@@ -326,6 +335,7 @@ export async function verifyToken(req, res) {
       username: user.username,
       email: user.email,
       verified: user.verified,
+      role: user.role,
     },
   });
 }

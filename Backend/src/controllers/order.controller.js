@@ -113,6 +113,10 @@ export const verify = async (req, res) => {
 
 export const getOrders = async (req, res) => {
   try {
+    const order = await Order.find({ user: req.user.id }).populate(
+      "items.product",
+    );
+    res.status(200).json({ order });
   } catch (error) {
     res
       .status(500)
