@@ -10,6 +10,8 @@ import {
   faMoon,
   faUser,
   faBagShopping,
+  faTruck,
+  faStore,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faUser as faUserRegular,
@@ -30,6 +32,9 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // role
+  const role = loggedIn.user?.role;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -137,7 +142,7 @@ export function Navbar() {
                 />
               </motion.button>
 
-              {/* User Account / Profile */}
+              {/* User Account / Seller Dashboard */}
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -145,55 +150,89 @@ export function Navbar() {
                 onClick={() =>
                   navigate(loggedIn.status ? "/profile" : "/login")
                 }
-                aria-label="User Account"
+                aria-label={
+                  role === "seller" ? "Seller Dashboard" : "User Account"
+                }
               >
                 <FontAwesomeIcon
-                  icon={loggedIn.status ? faUser : faUserRegular}
+                  icon={
+                    loggedIn.status
+                      ? role === "seller"
+                        ? faStore
+                        : faUser
+                      : faUserRegular
+                  }
                   className={`${loggedIn.status ? "text-brand-600 dark:text-brand-400" : ""} text-lg`}
                 />
-                {loggedIn.status && (
-                  <span className="absolute bottom-1 right-1 w-2 h-2 bg-emerald-500 rounded-full border border-white dark:border-gray-950"></span>
-                )}
               </motion.button>
 
               {/* Wishlist */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
-                onClick={() => navigate("/wishlist")}
-                aria-label="Wishlist"
-              >
-                <FontAwesomeIcon icon={faHeartRegular} className="text-lg" />
-                {wishlist && wishlist.length > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold">
-                    {wishlist.length}
-                  </span>
-                )}
-              </motion.button>
+
+              {role === "buyer" && (
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
+                  onClick={() => navigate("/wishlist")}
+                  aria-label="Wishlist"
+                >
+                  <FontAwesomeIcon icon={faHeartRegular} className="text-lg" />
+                  {wishlist && wishlist.length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold">
+                      {wishlist.length}
+                    </span>
+                  )}
+                </motion.button>
+              )}
 
               {/* Cart */}
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
-                onClick={() => navigate("/my-cart")}
-                aria-label="Shopping cart"
-              >
-                <FontAwesomeIcon icon={faBagShopping} className="text-lg" />
-                <AnimatePresence>
-                  {totalItems > 0 && (
-                    <motion.span
-                      key={totalItems}
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-brand-700 text-white rounded-full text-[10px] flex items-center justify-center font-bold"
-                    >
-                      {totalItems}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.button>
+              {role === "buyer" && (
+                <>
+                  {/* Orders */}
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
+                    onClick={() => navigate("/my-orders")}
+                    aria-label="Shopping cart"
+                  >
+                    <FontAwesomeIcon icon={faTruck} className="text-lg" />
+                    <AnimatePresence>
+                      {totalItems > 0 && (
+                        <motion.span
+                          key={totalItems}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-brand-700 text-white rounded-full text-[10px] flex items-center justify-center font-bold"
+                        >
+                          {totalItems}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
+                    onClick={() => navigate("/my-cart")}
+                    aria-label="Shopping cart"
+                  >
+                    <FontAwesomeIcon icon={faBagShopping} className="text-lg" />
+                    <AnimatePresence>
+                      {totalItems > 0 && (
+                        <motion.span
+                          key={totalItems}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-brand-700 text-white rounded-full text-[10px] flex items-center justify-center font-bold"
+                        >
+                          {totalItems}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </motion.button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -286,8 +325,18 @@ export function Navbar() {
                     className="text-lg font-medium py-2 border-b border-gray-100 dark:border-gray-800 hover:text-brand-700 dark:hover:text-brand-400 transition flex items-center gap-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <FontAwesomeIcon icon={faUserRegular} />{" "}
-                    {loggedIn ? "My Profile" : "Login / Register"}
+                    <FontAwesomeIcon
+                      icon={
+                        loggedIn.status && role === "seller"
+                          ? faStore
+                          : faUserRegular
+                      }
+                    />{" "}
+                    {loggedIn.status
+                      ? role === "seller"
+                        ? "Seller Dashboard"
+                        : "My Profile"
+                      : "Login / Register"}
                   </Link>
                 </nav>
                 <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">

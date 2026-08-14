@@ -93,7 +93,7 @@ export const AppProvider = ({ children }) => {
   const [cartOpen, setCartOpen] = useState(false);
 
   //  Order
-  const [order, setOrder] = useState({});
+  const [order, setOrder] = useState([]);
   const [orderLoading, setOrderLoading] = useState(false);
 
   //------------------------------ functions--------------------------//
@@ -112,6 +112,16 @@ export const AppProvider = ({ children }) => {
       setCartLoading(false);
     }
   });
+
+  //  fetch orders
+  const fetchOrders = useCallback(async () => {
+    try {
+      const response = await axiosPrivate.get("order/get-orders");
+      setOrder(...[], response.data.order);
+    } catch (error) {
+      setToast({ message: `failed to get orders: ${error}`, type: "failure" });
+    }
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addToCart = useCallback(
@@ -177,21 +187,18 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const removeFromCart = useCallback(
-    async (productId) => {
-      // console.log(productId);
-      // console.log(auth.accessToken);
-      setCartItems((prev) => prev.filter((item) => item._id !== productId));
+  const removeFromCart = useCallback(async (productId) => {
+    // console.log(productId);
+    // console.log(auth.accessToken);
+    setCartItems((prev) => prev.filter((item) => item._id !== productId));
 
-      await axiosPrivate.delete("/cart/remove-from-cart", {
-        data: {
-          productId,
-        },
-      });
-      setToast({ message: "Item removed from bag", type: "success" });
-    },
-    [],
-  );
+    await axiosPrivate.delete("/cart/remove-from-cart", {
+      data: {
+        productId,
+      },
+    });
+    setToast({ message: "Item removed from bag", type: "success" });
+  }, []);
 
   // Wishlist functions
   const toggleWishlist = useCallback((productId) => {
@@ -369,7 +376,9 @@ export const AppProvider = ({ children }) => {
         fetchCartItems,
         createOrder,
         order,
+        setOrder,
         orderLoading,
+        fetchOrders,
       }}
     >
       {children}

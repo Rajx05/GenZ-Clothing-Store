@@ -1,16 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { HeroSection } from "../components/HeroSection";
 import { CategoriesSection } from "../components/CategoriesSection";
 import { TestimonialsSection } from "../components/TestimonialsSection";
 import { InstagramSection } from "../components/InstagramSection";
 import { NewsletterSection } from "../components/NewsletterSection";
 import { ProductCard } from "../components/ProductCard";
-import { PRODUCTS } from "../data/constants";
+import { ProductCardSkeleton } from "../components/Skeleton";
+import useApp from "../hooks/useApp";
 
 export default function Home() {
-  // Show top 4 products as featured
-  const featuredProducts = PRODUCTS.slice(0, 4);
+  const { getProducts } = useApp();
+
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real products from the API so card links (/product/:id) resolve
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const products = await getProducts({ limit: 4, sortBy: "" });
+        if (!cancelled) setFeaturedProducts(products || []);
+      } catch {
+        // ignore — the empty state below handles offline/unavailable backend
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [getProducts]);
 
   return (
     <div>
@@ -36,11 +61,38 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredProducts.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </div>
+          {loading ? (
+            <div
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+              aria-busy="true"
+            >
+              {Array.from({ length: 4 }).map((_, i) => (
+                <ProductCardSkeleton key={i} index={i} />
+              ))}
+            </div>
+          ) : featuredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {featuredProducts.map((product, i) => (
+                <ProductCard key={product._id} product={product} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-20 text-center">
+              <FontAwesomeIcon
+                icon={faBoxOpen}
+                className="text-4xl text-gray-300 dark:text-gray-600 mb-4"
+              />
+              <p className="text-gray-500 dark:text-gray-400">
+                Couldn&apos;t load featured products right now.
+              </p>
+              <Link
+                to="/shop"
+                className="mt-6 inline-block px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-semibold tracking-wider transition hover:bg-gray-800 dark:hover:bg-gray-100"
+              >
+                BROWSE THE COLLECTION
+              </Link>
+            </div>
+          )}
         </div>
       </section>
       <CategoriesSection />

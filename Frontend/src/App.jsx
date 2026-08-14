@@ -24,6 +24,7 @@ import Profile from "./pages/Profile";
 import MyCart from "./pages/Mycart";
 import Checkout from "./pages/Checkout";
 import Verify from "./pages/Verify";
+import Orders from "./pages/Orders";
 
 function App() {
   const { loggedIn } = useAuth();
@@ -76,6 +77,7 @@ function App() {
           <Route path="/login" element={<Auth />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/my-cart" element={<MyCart />} />
+          <Route path="/my-orders" element={<Orders />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/verify" element={<Verify />} />
         </Routes>

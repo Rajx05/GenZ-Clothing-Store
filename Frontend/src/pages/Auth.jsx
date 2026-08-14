@@ -99,6 +99,7 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(Array(6).fill(""));
+  const [role, setRole] = useState("buyer");
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -218,6 +219,7 @@ export default function Auth() {
         username: username,
         email: email,
         password: password,
+        role: role,
       });
 
       if (res.status === 409) {
@@ -277,7 +279,7 @@ export default function Auth() {
       await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, role }),
       }).then((res) => {
         if (!res.ok) throw new Error();
       });
@@ -551,6 +553,51 @@ export default function Auth() {
                           {errors.confirmPassword}
                         </p>
                       )}
+                    </div>
+
+                    <div>
+                      <span className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        I want to
+                      </span>
+                      <div
+                        role="radiogroup"
+                        aria-label="Account role"
+                        className="grid grid-cols-2 gap-2"
+                      >
+                        {[
+                          { value: "buyer", title: "Shop", desc: "Buyer" },
+                          { value: "seller", title: "Sell", desc: "Seller" },
+                        ].map((option) => {
+                          const selected = role === option.value;
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              role="radio"
+                              aria-checked={selected}
+                              onClick={() => setRole(option.value)}
+                              className={`flex flex-col items-start gap-0.5 px-4 py-3 rounded-xl border text-left transition-colors ${
+                                selected
+                                  ? "border-brand-600 bg-brand-50 dark:bg-brand-900/20 dark:border-brand-400"
+                                  : "border-gray-200 dark:border-gray-800 hover:border-gray-400 dark:hover:border-gray-600"
+                              }`}
+                            >
+                              <span
+                                className={`text-sm font-semibold ${
+                                  selected
+                                    ? "text-brand-700 dark:text-brand-300"
+                                    : "text-gray-900 dark:text-gray-100"
+                                }`}
+                              >
+                                {option.title}
+                              </span>
+                              <span className="text-[11px] text-gray-500 dark:text-gray-400">
+                                {option.desc}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     <motion.button
