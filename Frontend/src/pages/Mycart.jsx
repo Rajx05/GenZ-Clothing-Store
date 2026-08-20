@@ -21,7 +21,7 @@ function AnimatedNumber({ value, className }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
-  return <span className={className}>${display.toFixed(2)}</span>;
+  return <span className={className}>₹{display.toFixed(2)}</span>;
 }
 
 export default function MyCart() {
@@ -151,7 +151,8 @@ export default function MyCart() {
   }
 
   // Calculations
-  const subtotal = cartItems.reduce(
+  const validItems = (cartItems || []).filter((item) => item?.product);
+  const subtotal = validItems.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
     0,
   );
@@ -185,7 +186,7 @@ export default function MyCart() {
           transition={{ delay: 0.15 }}
           className="text-sm text-gray-500 dark:text-gray-400 mt-2"
         >
-          {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} in your bag
+          {validItems.length} item{validItems.length !== 1 ? "s" : ""} in your bag
         </motion.p>
       </div>
 
@@ -194,7 +195,7 @@ export default function MyCart() {
         <div className="lg:col-span-8">
           <div className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {cartItems.map((item, i) => {
+              {validItems.map((item, i) => {
                 const lineTotal = item.product.price * item.quantity;
                 return (
                   <motion.div
@@ -389,7 +390,7 @@ export default function MyCart() {
                 >
                   Add{" "}
                   <span className="font-semibold">
-                    ${(150 - subtotal).toFixed(2)}
+                    ₹{(150 - subtotal).toFixed(2)}
                   </span>{" "}
                   more to unlock <strong>Free Express Shipping</strong>!
                 </motion.p>

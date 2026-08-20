@@ -24,7 +24,9 @@ export function CartSidebar() {
     removeFromCart,
   } = useApp();
 
-  const subtotal = (cartItems || []).reduce(
+  const validItems = (cartItems || []).filter((item) => item?.product);
+
+  const subtotal = validItems.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0,
   );
@@ -55,7 +57,7 @@ export function CartSidebar() {
               <div>
                 <h2 className="font-display text-xl font-bold">Shopping Bag</h2>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  {cartItems.length} item{cartItems.length !== 1 ? "s" : ""}
+                  {validItems.length} item{validItems.length !== 1 ? "s" : ""}
                 </p>
               </div>
               <button
@@ -71,7 +73,7 @@ export function CartSidebar() {
               <div className="px-6 py-3 bg-brand-50 dark:bg-brand-900/20">
                 <p className="text-xs text-center mb-1.5">
                   <span className="font-semibold">
-                    ${(150 - subtotal).toFixed(0)}
+                    ₹{(150 - subtotal).toFixed(0)}
                   </span>{" "}
                   away from free shipping!
                 </p>
@@ -89,13 +91,13 @@ export function CartSidebar() {
 
             {/* Items */}
             <div className="flex-1 overflow-y-auto p-6">
-              {cartLoading && cartItems.length === 0 ? (
+              {cartLoading && validItems.length === 0 ? (
                 <div className="space-y-4" aria-busy="true" aria-label="Loading bag">
                   <CartItemSkeleton slim />
                   <CartItemSkeleton slim />
                   <CartItemSkeleton slim />
                 </div>
-              ) : cartItems.length === 0 ? (
+              ) : validItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center">
                   <FontAwesomeIcon
                     icon={faBagShopping}
@@ -119,7 +121,7 @@ export function CartSidebar() {
               ) : (
                 <div className="space-y-4">
                   <AnimatePresence>
-                    {cartItems.map((item) => (
+                    {validItems.map((item) => (
                       <motion.div
                         key={item._id}
                         layout
@@ -175,7 +177,7 @@ export function CartSidebar() {
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="font-semibold text-sm">
-                                ${item.product.price * item.quantity}
+                                ₹{item.product.price * item.quantity}
                               </span>
                               <button
                                 onClick={() => removeFromCart(item._id)}
@@ -194,12 +196,12 @@ export function CartSidebar() {
             </div>
 
             {/* Footer */}
-            {cartItems.length > 0 && (
+            {validItems.length > 0 && (
               <div className="border-t border-gray-200 dark:border-gray-800 p-6 bg-gray-50 dark:bg-gray-800/50">
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Shipping</span>
@@ -207,13 +209,13 @@ export function CartSidebar() {
                       {shipping === 0 ? (
                         <span className="text-green-500 font-medium">FREE</span>
                       ) : (
-                        `$${shipping.toFixed(2)}`
+                        `₹${shipping.toFixed(2)}`
                       )}
                     </span>
                   </div>
                   <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-200 dark:border-gray-700">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
                 </div>
                 <motion.button
@@ -225,7 +227,7 @@ export function CartSidebar() {
                     navigate("/checkout");
                   }}
                 >
-                  CHECKOUT — ${total.toFixed(2)}
+                  CHECKOUT — ₹{total.toFixed(2)}
                 </motion.button>
                 <p className="text-[10px] text-center text-gray-400 mt-3">
                   <FontAwesomeIcon icon={faLock} className="mr-1" /> Secure

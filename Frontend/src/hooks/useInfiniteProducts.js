@@ -85,7 +85,13 @@ export default function useInfiniteProducts({
       const res = await axios(`/products/get-all?${buildParams(nextPage)}`);
       // Discard if filters changed while the request was in-flight
       if (rid !== resetIdRef.current) return;
-      setProducts((prev) => [...prev, ...(res.data.products || [])]);
+      setProducts((prev) => {
+        const existingIds = new Set(prev.map((p) => p._id));
+        const newProducts = (res.data.products || []).filter(
+          (p) => !existingIds.has(p._id),
+        );
+        return [...prev, ...newProducts];
+      });
       setHasMore(!!res.data.hasMore);
       setPage(nextPage);
     } catch {

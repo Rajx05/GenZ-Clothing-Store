@@ -10,7 +10,7 @@ export default function Checkout() {
   useEffect(() => {
     if (firedRef.current) return;
     firedRef.current = true;
-    createOrder(cartItems);
+    createOrder(cartItems.filter((item) => item?.product));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

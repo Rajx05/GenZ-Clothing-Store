@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -249,7 +249,7 @@ function StatCard({ label, value, from, badge, decrease = false, children }) {
     >
       <TrendBadge value={badge} decrease={decrease} />
       <div>
-        <strong className="block text-sm font-medium text-gray-600 dark:text-gray-400">
+        <strong className="block text-sm font-medium text-gray-600 dark:text-gray-50">
           {label}
         </strong>
         <p className="mt-1">
@@ -352,7 +352,7 @@ function RevenueTrendChart({ series, dark }) {
         grid: { color: gridColor },
         ticks: {
           color: axisColor,
-          callback: (tickValue) => `$${Number(tickValue) / 1000}k`,
+          callback: (tickValue) => `₹${Number(tickValue) / 1000}k`,
         },
       },
     },
@@ -832,7 +832,8 @@ export default function SellerDashboard() {
   const { loggedIn, setLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [active, setActive] = useState("overview");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const active = searchParams.get("tab") || "overview";
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const loggedOutRef = useRef(false);
 
@@ -916,7 +917,7 @@ export default function SellerDashboard() {
         <SellerSidebar
           user={user}
           active={active}
-          onSelect={setActive}
+          onSelect={(id) => setSearchParams({ tab: id })}
           onLogout={handleLogout}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}

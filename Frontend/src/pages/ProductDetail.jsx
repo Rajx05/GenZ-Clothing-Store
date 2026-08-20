@@ -224,26 +224,22 @@ export default function ProductDetail() {
 
             <div className="flex items-baseline gap-3 mb-4">
               <span className="text-2xl md:text-3xl font-bold">
-                ${product.price}
+                ₹{product.price}
               </span>
               {product.originalPrice && (
                 <>
                   <span className="text-lg price-original text-gray-400">
-                    ${product.originalPrice}
+                    ₹{product.originalPrice}
                   </span>
                   <span className="text-xs text-red-500 font-semibold bg-red-50 dark:bg-red-500/10 px-2.5 py-0.5 rounded-full">
-                    Save ${product.originalPrice - product.price}
+                    Save ₹{product.originalPrice - product.price}
                   </span>
                 </>
               )}
             </div>
 
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 border-b border-gray-100 dark:border-gray-800 pb-4">
-              Crafted with meticulous attention to detail, this piece embodies
-              our commitment to quality and timeless design. Made from premium
-              materials for lasting comfort and style. It is designed to drape
-              beautifully, offering both exceptional luxury and practical
-              wearability for any premium collection.
+              {product.description || "No description available."}
             </p>
 
             {/* Color Selector */}
@@ -329,7 +325,7 @@ export default function ProductDetail() {
                 className="flex-1 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl font-semibold text-xs tracking-wide hover:bg-gray-800 dark:hover:bg-gray-100 transition shadow-lg flex items-center justify-center gap-2"
               >
                 <FontAwesomeIcon icon={faBagShopping} className="text-xs" />
-                ADD TO BAG — ${(product.price * quantity).toFixed(2)}
+                ADD TO BAG — ₹{(product.price * quantity).toFixed(2)}
               </motion.button>
 
               <motion.button

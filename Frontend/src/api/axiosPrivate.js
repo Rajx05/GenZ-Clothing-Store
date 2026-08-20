@@ -4,9 +4,6 @@ import axios from "axios";
 const axiosPrivate = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
   withCredentials: true, // sends refresh cookie
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Mutable auth state - updated via setAuthState from React context
@@ -55,7 +52,7 @@ axiosPrivate.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response interceptor - handles 401 errors with automatic token refresh
@@ -91,7 +88,7 @@ axiosPrivate.interceptors.response.use(
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL || "/api"}/auth/get-new-access-token`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
       const newAccessToken = response.data.accessToken;
@@ -128,7 +125,7 @@ axiosPrivate.interceptors.response.use(
     } finally {
       isRefreshing = false;
     }
-  }
+  },
 );
 
 export default axiosPrivate;

@@ -164,7 +164,7 @@ function OverviewPanel({ user, stats, onSelect, cartLoading }) {
     },
     {
       icon: faDollarSign,
-      value: `$${stats.cartSubtotal.toFixed(2)}`,
+      value: `₹${stats.cartSubtotal.toFixed(2)}`,
       label: "Cart Subtotal",
       iconCls: "",
     },
@@ -305,7 +305,7 @@ function WishlistPanel({ wishedProducts, wishlistCount }) {
                   {product.name}
                 </p>
                 <p className="text-sm font-bold text-gray-900 dark:text-gray-100 mt-0.5">
-                  ${product.price}
+                  ₹{product.price}
                 </p>
               </motion.div>
             ))}

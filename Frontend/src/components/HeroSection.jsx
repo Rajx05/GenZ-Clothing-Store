@@ -12,13 +12,13 @@ export function HeroSection() {
         <source
           media="(max-width: 768px)"
           srcSet={heroImgMobile}
-          fetchPriority="high"
+          fetchpriority="high"
         />
 
         <img
           src={heroImgDesktop}
           alt="Hero fashion"
-          fetchPriority="high"
+          fetchpriority="high"
           className="absolute inset-0 w-full h-full object-cover"
         />
       </picture>

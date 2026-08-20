@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import axiosPrivate from "../../api/axiosPrivate";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,8 +10,10 @@ import {
   faXmark,
   faBoxesStacked,
   faBagShopping,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import { PRODUCTS, CATEGORIES } from "../../data/constants";
+import { CATEGORIES } from "../../data/constants";
+import useApp from "../../hooks/useApp";
 
 const spring = { type: "spring", stiffness: 260, damping: 24 };
 
@@ -71,10 +74,11 @@ function StockPill({ stock }) {
   );
 }
 
-function ProductFormModal({ initial, onSave, onClose }) {
+function ProductFormModal({ initial, onSave, onClose, submitting }) {
   const isEdit = Boolean(initial);
   const [form, setForm] = useState(() => ({
     name: initial?.name ?? "",
+    description: initial?.description ?? "",
     price: initial?.price ?? "",
     originalPrice: initial?.originalPrice ?? "",
     category: initial?.category ?? CATEGORIES[0]?.name ?? "Dresses",
@@ -84,46 +88,44 @@ function ProductFormModal({ initial, onSave, onClose }) {
     stock: initial?.stock ?? "",
     badge: initial?.badge ?? "",
   }));
+  const fileRef = useRef(null);
   const [errors, setErrors] = useState({});
 
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  const toggleSize = (size) =>
+  const toggleSize = (size) => {
     set(
       "sizes",
       form.sizes.includes(size)
         ? form.sizes.filter((s) => s !== size)
         : [...form.sizes, size],
     );
-
-  const toggleColor = (color) =>
+  };
+  const toggleColor = (color) => {
     set(
       "colors",
       form.colors.includes(color)
         ? form.colors.filter((c) => c !== color)
         : [...form.colors, color],
     );
-
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     const nextErrors = {};
     if (!form.name.trim()) nextErrors.name = "Product name is required";
     if (form.price === "" || Number(form.price) <= 0)
       nextErrors.price = "Enter a valid price";
-    if (!form.image.trim()) nextErrors.image = "Image URL is required";
     if (form.sizes.length === 0) nextErrors.sizes = "Pick at least one size";
     if (form.colors.length === 0) nextErrors.colors = "Pick at least one color";
 
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
-
     onSave({
       ...form,
       price: Number(form.price),
-      originalPrice: form.originalPrice
-        ? Number(form.originalPrice)
-        : null,
+      originalPrice: form.originalPrice ? Number(form.originalPrice) : null,
       stock: Number(form.stock) || 0,
+      imageFile: fileRef.current?.files?.[0] ?? null,
     });
   };
 
@@ -164,29 +166,50 @@ function ProductFormModal({ initial, onSave, onClose }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-5 px-6 py-5 max-h-[65vh] overflow-y-auto custom-scrollbar">
+        <form
+          onSubmit={handleSubmit}
+          id="product-form"
+          className="space-y-5 px-6 py-5 max-h-[65vh] overflow-y-auto custom-scrollbar"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="sm:col-span-2">
               <label className={labelCls}>Product name</label>
               <input
                 type="text"
                 value={form.name}
+                name="name"
                 onChange={(e) => set("name", e.target.value)}
                 placeholder="e.g. Wool Blend Trench Coat"
                 className={inputCls(errors.name)}
               />
               {errors.name && (
-                <p className="text-xs text-red-500 mt-1 font-medium" role="alert">
+                <p
+                  className="text-xs text-red-500 mt-1 font-medium"
+                  role="alert"
+                >
                   {errors.name}
                 </p>
               )}
             </div>
 
+            <div className="sm:col-span-2">
+              <label className={labelCls}>Description</label>
+              <textarea
+                value={form.description}
+                name="description"
+                onChange={(e) => set("description", e.target.value)}
+                placeholder="Describe your product..."
+                rows={3}
+                className={inputCls(errors.description)}
+              />
+            </div>
+
             <div>
-              <label className={labelCls}>Price ($)</label>
+              <label className={labelCls}>Price (₹)</label>
               <input
                 type="number"
                 min="0"
+                name="price"
                 step="0.01"
                 value={form.price}
                 onChange={(e) => set("price", e.target.value)}
@@ -194,17 +217,21 @@ function ProductFormModal({ initial, onSave, onClose }) {
                 className={inputCls(errors.price)}
               />
               {errors.price && (
-                <p className="text-xs text-red-500 mt-1 font-medium" role="alert">
+                <p
+                  className="text-xs text-red-500 mt-1 font-medium"
+                  role="alert"
+                >
                   {errors.price}
                 </p>
               )}
             </div>
 
             <div>
-              <label className={labelCls}>Original price ($)</label>
+              <label className={labelCls}>Original price (₹)</label>
               <input
                 type="number"
                 min="0"
+                name="original_price"
                 step="0.01"
                 value={form.originalPrice}
                 onChange={(e) => set("originalPrice", e.target.value)}
@@ -216,6 +243,7 @@ function ProductFormModal({ initial, onSave, onClose }) {
             <div>
               <label className={labelCls}>Category</label>
               <select
+                name="category"
                 value={form.category}
                 onChange={(e) => set("category", e.target.value)}
                 className={inputCls()}
@@ -233,6 +261,7 @@ function ProductFormModal({ initial, onSave, onClose }) {
               <input
                 type="number"
                 min="0"
+                name="stock"
                 value={form.stock}
                 onChange={(e) => set("stock", e.target.value)}
                 placeholder="0"
@@ -249,6 +278,8 @@ function ProductFormModal({ initial, onSave, onClose }) {
                     <button
                       key={b.value}
                       type="button"
+                      value={form.badge}
+                      name="badge"
                       onClick={() => set("badge", b.value)}
                       className={`px-4 py-2 rounded-xl text-xs font-semibold border transition-colors ${
                         selected
@@ -264,33 +295,22 @@ function ProductFormModal({ initial, onSave, onClose }) {
             </div>
 
             <div className="sm:col-span-2">
-              <label className={labelCls}>Image URL</label>
+              <label className={labelCls}>Upload Image </label>
               <input
-                type="text"
-                value={form.image}
-                onChange={(e) => set("image", e.target.value)}
-                placeholder="https://images.unsplash.com/..."
+                type="file"
+                ref={fileRef}
+                name="image"
+                accept="image/png, image/jpeg, image/webp, image/jpg"
+                required
                 className={inputCls(errors.image)}
               />
               {errors.image && (
-                <p className="text-xs text-red-500 mt-1 font-medium" role="alert">
+                <p
+                  className="text-xs text-red-500 mt-1 font-medium"
+                  role="alert"
+                >
                   {errors.image}
                 </p>
-              )}
-              {form.image.trim() && (
-                <div className="mt-3 h-32 w-24 overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-                  <img
-                    src={form.image}
-                    alt="Preview"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                    onLoad={(e) => {
-                      e.currentTarget.style.display = "";
-                    }}
-                  />
-                </div>
               )}
             </div>
 
@@ -303,6 +323,8 @@ function ProductFormModal({ initial, onSave, onClose }) {
                     <button
                       key={size}
                       type="button"
+                      value={form.sizes}
+                      name="sizes"
                       onClick={() => toggleSize(size)}
                       className={`h-10 w-10 rounded-xl text-xs font-bold border transition-colors ${
                         selected
@@ -316,7 +338,10 @@ function ProductFormModal({ initial, onSave, onClose }) {
                 })}
               </div>
               {errors.sizes && (
-                <p className="text-xs text-red-500 mt-1 font-medium" role="alert">
+                <p
+                  className="text-xs text-red-500 mt-1 font-medium"
+                  role="alert"
+                >
                   {errors.sizes}
                 </p>
               )}
@@ -330,9 +355,12 @@ function ProductFormModal({ initial, onSave, onClose }) {
                   return (
                     <button
                       key={color}
+                      value={form.colors}
                       type="button"
+                      name="colors"
                       onClick={() => toggleColor(color)}
                       aria-label={`Color ${color}`}
+                      required
                       className={`h-9 w-9 rounded-full border-2 transition ${
                         selected
                           ? "border-brand-600 scale-110"
@@ -344,7 +372,10 @@ function ProductFormModal({ initial, onSave, onClose }) {
                 })}
               </div>
               {errors.colors && (
-                <p className="text-xs text-red-500 mt-1 font-medium" role="alert">
+                <p
+                  className="text-xs text-red-500 mt-1 font-medium"
+                  role="alert"
+                >
                   {errors.colors}
                 </p>
               )}
@@ -360,12 +391,18 @@ function ProductFormModal({ initial, onSave, onClose }) {
               CANCEL
             </button>
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: submitting ? 1 : 1.02 }}
+              whileTap={{ scale: submitting ? 1 : 0.98 }}
               type="submit"
-              className="px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-semibold tracking-wider shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
+              disabled={submitting}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-semibold tracking-wider shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isEdit ? "SAVE CHANGES" : "ADD PRODUCT"}
+              {submitting && (
+                <FontAwesomeIcon icon={faSpinner} spin className="text-[10px]" />
+              )}
+              {submitting
+                ? isEdit ? "SAVING..." : "ADDING..."
+                : isEdit ? "SAVE CHANGES" : "ADD PRODUCT"}
             </motion.button>
           </div>
         </form>
@@ -375,39 +412,47 @@ function ProductFormModal({ initial, onSave, onClose }) {
 }
 
 export default function ProductsPanel({ setToast }) {
-  const [products, setProducts] = useState(() =>
-    PRODUCTS.map((p, i) => ({
-      ...p,
-      id: `demo-${i + 1}`,
-      stock: [12, 8, 4, 0, 6, 3, 15, 0][i % 8] ?? 5,
-      sold: [143, 96, 201, 342, 167, 89, 124, 54][i % 8] ?? 0,
-    })),
-  );
+  const { sellerProducts, setSellerProducts, getSellerProducts } = useApp();
+
+  useEffect(() => {
+    getSellerProducts();
+  }, [getSellerProducts]);
+
+  const products = sellerProducts;
+  const total = products.length !== undefined ? products.length : 0;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const stats = useMemo(() => {
-    const total = products.length;
-    const out = products.filter((p) => p.stock <= 0).length;
-    const low = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
-    return { total, low, out, active: total - low - out };
-  }, [products]);
+    if (total !== 0) {
+      const out = products.filter((p) => p.stock <= 0).length;
+      const low = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
+      return { total, low, out, active: total - low - out };
+    } else {
+      return { total, low: 0, out: 0, active: 0 };
+    }
+  }, [products, total]);
 
   const filtered = useMemo(() => {
-    return products.filter((p) => {
-      const matchesQuery =
-        !query.trim() ||
-        p.name.toLowerCase().includes(query.trim().toLowerCase());
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "active" && p.stock > 5) ||
-        (filter === "low" && p.stock > 0 && p.stock <= 5) ||
-        (filter === "out" && p.stock <= 0);
-      return matchesQuery && matchesFilter;
-    });
-  }, [products, query, filter]);
+    if (total === 0) {
+      return {};
+    } else {
+      return products.filter((p) => {
+        const matchesQuery =
+          !query.trim() ||
+          p.name.toLowerCase().includes(query.trim().toLowerCase());
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "active" && p.stock > 5) ||
+          (filter === "low" && p.stock > 0 && p.stock <= 5) ||
+          (filter === "out" && p.stock <= 0);
+        return matchesQuery && matchesFilter;
+      });
+    }
+  }, [products, query, filter, total]);
 
   const openAdd = () => {
     setEditing(null);
@@ -419,41 +464,71 @@ export default function ProductsPanel({ setToast }) {
     setModalOpen(true);
   };
 
-  const handleSave = (data) => {
+  const handleSave = async (data) => {
+    // IF EDITING EXISTING PRODUCT
     if (editing) {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === editing.id ? { ...p, ...data } : p)),
+      setSellerProducts((prev) =>
+        prev.map((p) => (p._id === editing._id ? { ...p, ...data } : p)),
       );
       setToast?.({
         message: `"${data.name}" updated successfully!`,
         type: "success",
       });
-    } else {
-      setProducts((prev) => [
-        {
-          ...data,
-          id: `demo-${Date.now()}`,
-          rating: 0,
-          reviews: 0,
-          sold: 0,
-        },
-        ...prev,
-      ]);
-      setToast?.({
-        message: `"${data.name}" added to your catalog!`,
-        type: "success",
-      });
+    }
+
+    // IF ADDING NEW PRODUCT
+    else {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+      formData.append("originalPrice", data.originalPrice ?? "");
+      formData.append("category", data.category);
+      formData.append("stock", data.stock);
+      formData.append("badge", data.badge);
+      formData.append("sizes", JSON.stringify(data.sizes));
+      formData.append("colors", JSON.stringify(data.colors));
+      if (data.imageFile) {
+        formData.append("image", data.imageFile);
+      }
+
+      try {
+        setSubmitting(true);
+        await axiosPrivate.post("/seller-products/add", formData);
+        await getSellerProducts();
+        setToast?.({
+          message: `"${data.name}" added to your catalog!`,
+          type: "success",
+        });
+      } catch (error) {
+        console.error("Error adding product:", error);
+        setToast?.({
+          message: "Failed to add product. Please try again.",
+          type: "error",
+        });
+      } finally {
+        setSubmitting(false);
+      }
     }
     setModalOpen(false);
     setEditing(null);
   };
 
-  const handleDelete = (product) => {
-    setProducts((prev) => prev.filter((p) => p.id !== product.id));
-    setToast?.({
-      message: `"${product.name}" removed from your catalog.`,
-      type: "info",
-    });
+  const handleDelete = async (product) => {
+    try {
+      await axiosPrivate.delete(`/seller-products/${product._id}`);
+      await getSellerProducts();
+      setToast?.({
+        message: `"${product.name}" removed from your catalog.`,
+        type: "info",
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      setToast?.({
+        message: "Failed to delete product. Please try again.",
+        type: "error",
+      });
+    }
   };
 
   const statCards = [
@@ -568,7 +643,7 @@ export default function ProductsPanel({ setToast }) {
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {filtered.map((product, i) => (
               <motion.div
-                key={product.id}
+                key={product._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: Math.min(i * 0.04, 0.4) }}
@@ -595,7 +670,10 @@ export default function ProductsPanel({ setToast }) {
                     </span>
                   )}
                   <span className="absolute top-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-gray-900/70 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-white backdrop-blur">
-                    <FontAwesomeIcon icon={faBagShopping} className="text-[9px]" />
+                    <FontAwesomeIcon
+                      icon={faBagShopping}
+                      className="text-[9px]"
+                    />
                     {product.sold ?? 0} sold
                   </span>
                   <div className="absolute inset-0 flex items-center justify-center gap-2 bg-gray-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
@@ -626,9 +704,7 @@ export default function ProductsPanel({ setToast }) {
                     {product.category}
                   </p>
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <span className="font-bold text-sm">
-                      ${product.price}
-                    </span>
+                    <span className="font-bold text-sm">₹{product.price}</span>
                     <StockPill stock={product.stock} />
                   </div>
                 </div>
@@ -668,6 +744,7 @@ export default function ProductsPanel({ setToast }) {
           <ProductFormModal
             initial={editing}
             onSave={handleSave}
+            submitting={submitting}
             onClose={() => {
               setModalOpen(false);
               setEditing(null);

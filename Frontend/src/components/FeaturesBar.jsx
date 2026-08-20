@@ -10,7 +10,7 @@ import {
 
 export function FeaturesBar() {
   const features = [
-    { icon: faTruckFast, title: "Free Shipping", desc: "On orders over $150" },
+    { icon: faTruckFast, title: "Free Shipping", desc: "On orders over ₹150" },
     { icon: faRotateLeft, title: "Easy Returns", desc: "30-day return policy" },
     {
       icon: faShieldHalved,

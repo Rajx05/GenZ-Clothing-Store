@@ -199,9 +199,9 @@ export function computeStats(orders = []) {
 }
 
 export const formatMoney = (value, digits = 0) =>
-  new Intl.NumberFormat("en-US", {
+  new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "USD",
+    currency: "INR",
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(Number(value) || 0);

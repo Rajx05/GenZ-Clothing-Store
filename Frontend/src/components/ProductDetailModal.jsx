@@ -98,23 +98,21 @@ export function ProductDetailModal() {
               </div>
 
               <div className="flex items-baseline gap-3 mb-6">
-                <span className="text-3xl font-bold">${product.price}</span>
+                <span className="text-3xl font-bold">₹{product.price}</span>
                 {product.originalPrice && (
                   <>
                     <span className="text-lg price-original text-gray-400">
-                      ${product.originalPrice}
+                      ₹{product.originalPrice}
                     </span>
                     <span className="text-sm text-red-500 font-semibold bg-red-50 dark:bg-red-500/10 px-2 py-0.5 rounded-full">
-                      Save ${product.originalPrice - product.price}
+                      Save ₹{product.originalPrice - product.price}
                     </span>
                   </>
                 )}
               </div>
 
               <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
-                Crafted with meticulous attention to detail, this piece embodies
-                our commitment to quality and timeless design. Made from premium
-                materials for lasting comfort and style.
+                {product.description || "No description available."}
               </p>
 
               {/* Color */}
@@ -196,7 +194,7 @@ export function ProductDetailModal() {
                   )}
                   className="flex-1 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl font-semibold text-sm tracking-wide hover:bg-gray-800 dark:hover:bg-gray-100 transition shadow-lg"
                 >
-                  ADD TO BAG — ${product.price * quantity}
+                  ADD TO BAG — ₹{product.price * quantity}
                 </motion.button>
                 <motion.button
                   whileHover={{ scale: 1.1 }}

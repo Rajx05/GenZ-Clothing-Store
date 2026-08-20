@@ -79,6 +79,9 @@ export const AppProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [productsLoading, setProductsLoading] = useState(false);
 
+  // Seller Products
+  const [sellerProducts, setSellerProducts] = useState([]);
+
   // Cart
   const [cart, setCart] = useState(() => {
     try {
@@ -140,6 +143,7 @@ export const AppProvider = ({ children }) => {
         setCartItems((prev) => {
           const existingIndex = prev.findIndex(
             (item) =>
+              item?.product &&
               item.size === newProduct.size &&
               item.color === newProduct.color &&
               (item.product._id === newProduct.product._id ||
@@ -221,7 +225,7 @@ export const AppProvider = ({ children }) => {
         const queryParams = new URLSearchParams({
           page,
           limit,
-          filter,
+          category: filter,
           badge: badge || "",
           search: search || "",
           sortBy: sortBy || "",
@@ -242,6 +246,16 @@ export const AppProvider = ({ children }) => {
     [],
   );
 
+  // fetch seller's listed products
+  const getSellerProducts = useCallback(async () => {
+    try {
+      const response = await axiosPrivate.get("/seller-products");
+      setSellerProducts(response.data.products);
+    } catch (error) {
+      console.error("Error fetching seller products:", error);
+    }
+  }, []);
+
   const paymentVerification = useCallback(async (order) => {
     try {
       const response = await axiosPrivate.post("/order/verify", {
@@ -253,7 +267,7 @@ export const AppProvider = ({ children }) => {
       if (response.data?.status === "ok") {
         // Payment succeeded — drop the script + global so memory is freed
         disposeRazorpay();
-        setOrder({});
+        setOrder([]);
         setToast({ message: "Payment successful!", type: "success" });
         navigate("/my-cart");
       } else {
@@ -363,6 +377,9 @@ export const AppProvider = ({ children }) => {
         productsLoading,
         getProducts,
         setProducts,
+        sellerProducts,
+        setSellerProducts,
+        getSellerProducts,
         cart,
         addToCart,
         updateQuantity,

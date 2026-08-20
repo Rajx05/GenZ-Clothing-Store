@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,7 +7,7 @@ import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { StarRating } from "./StarRating";
 
-export function ProductCard({ product, index }) {
+export const ProductCard = forwardRef(function ProductCard({ product, index }, ref) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const navigate = useNavigate();
   const [selectedSize] = useState(null);
@@ -17,6 +17,7 @@ export function ProductCard({ product, index }) {
 
   return (
     <motion.div
+      ref={ref}
       layout
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
@@ -122,10 +123,10 @@ export function ProductCard({ product, index }) {
         </h3>
 
         <div className="flex items-center gap-2 mt-1">
-          <span className="font-bold text-base">${product.price}</span>
+          <span className="font-bold text-base">₹{product.price}</span>
           {product.originalPrice && (
             <span className="price-original text-sm text-gray-400">
-              ${product.originalPrice}
+              ₹{product.originalPrice}
             </span>
           )}
           {product.originalPrice && (
@@ -142,4 +143,4 @@ export function ProductCard({ product, index }) {
       </div>
     </motion.div>
   );
-}
+});
