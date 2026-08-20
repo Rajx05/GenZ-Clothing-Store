@@ -13,7 +13,7 @@ const seedDatabase = async () => {
     console.log("Cleared old products.");
 
     await Product.insertMany(initialProducts);
-    console.log("Successfully seeded 12 products! 🚀");
+    console.log("Successfully seeded products! 🚀");
 
     await mongoose.disconnect();
     process.exit(0);

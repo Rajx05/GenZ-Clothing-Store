@@ -5,7 +5,11 @@ import config from "../config/config.js";
 import sessionModel from "../models/session.model.js";
 import otpModel from "../models/otp.model.js";
 import { sendEmail } from "../services/email.service.js";
-import { generateOtp, getOtpHtml, setRefreshTokenCookie } from "../utils/utils.js";
+import {
+  generateOtp,
+  getOtpHtml,
+  setRefreshTokenCookie,
+} from "../utils/utils.js";
 
 export async function register(req, res) {
   const { username, email, password } = req.body;
@@ -92,6 +96,7 @@ export async function login(req, res) {
     const refreshToken = jwt.sign(
       {
         id: user._id,
+        role: user.role,
       },
       config.JWT_SECRET,
       {
@@ -114,7 +119,7 @@ export async function login(req, res) {
 
     // Generate Access token
     const accessToken = jwt.sign(
-      { id: user._id, sessionId: session._id },
+      { id: user._id, role: user.role, sessionId: session._id },
       config.JWT_SECRET,
       {
         expiresIn: "15m",
@@ -271,14 +276,19 @@ export async function refreshToken(req, res) {
     });
   }
 
-  const accessToken = jwt.sign({ id: decoded.id }, config.JWT_SECRET, {
-    expiresIn: "15m",
-  });
+  const accessToken = jwt.sign(
+    { id: decoded.id, role: decoded.role },
+    config.JWT_SECRET,
+    {
+      expiresIn: "15m",
+    },
+  );
 
   // Generate a new Refresh Token
   const newRefreshToken = jwt.sign(
     {
       id: decoded.id,
+      role: decoded.role,
       sessionId: session._id,
     },
     config.JWT_SECRET,

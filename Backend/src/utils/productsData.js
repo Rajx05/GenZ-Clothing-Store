@@ -3,6 +3,8 @@ export const initialProducts = [
   {
     id: 1,
     name: "Cashmere Overcoat",
+    description:
+      "A luxurious cashmere overcoat tailored for effortless elegance. Features a relaxed silhouette with notched lapels and a single-breasted closure, perfect for layering over both formal and casual outfits during cooler months.",
     price: 289,
     originalPrice: 349,
     category: "Outerwear",
@@ -17,6 +19,8 @@ export const initialProducts = [
   {
     id: 2,
     name: "Silk Midi Dress",
+    description:
+      "An effortlessly graceful silk midi dress with a fluid drape that moves beautifully with every step. The bias-cut silhouette flatters all body types, while delicate seam detailing adds subtle structure to this timeless piece.",
     price: 179,
     originalPrice: null,
     category: "Dresses",
@@ -31,6 +35,8 @@ export const initialProducts = [
   {
     id: 3,
     name: "Tailored Wool Blazer",
+    description:
+      "A impeccably tailored wool blazer crafted from premium Italian wool blend fabric. The structured shoulders and slim-fit cut create a polished silhouette, making it an essential piece for the modern wardrobe.",
     price: 229,
     originalPrice: 279,
     category: "Outerwear",
@@ -45,6 +51,8 @@ export const initialProducts = [
   {
     id: 4,
     name: "Organic Cotton Tee",
+    description:
+      "A buttery-soft organic cotton tee that delivers all-day comfort without compromising on style. The relaxed fit and reinforced seams ensure durability, while the sustainable fabric feels gentle against the skin.",
     price: 49,
     originalPrice: null,
     category: "Tops",
@@ -59,6 +67,8 @@ export const initialProducts = [
   {
     id: 5,
     name: "High-Rise Wide Leg Pants",
+    description:
+      "Statement wide-leg pants with a flattering high-rise waistline that elongates the legs. The flowing silhouette and pressed front crease lend a refined edge, while the lightweight fabric keeps you comfortable from day to night.",
     price: 119,
     originalPrice: 149,
     category: "Bottoms",
@@ -73,6 +83,8 @@ export const initialProducts = [
   {
     id: 6,
     name: "Linen Summer Dress",
+    description:
+      "A breezy linen summer dress designed for warm-weather elegance. The breathable fabric and relaxed A-line cut keep you cool, while the subtle texture and soft palette make it ideal for beach getaways and garden parties alike.",
     price: 159,
     originalPrice: null,
     category: "Dresses",
@@ -87,6 +99,8 @@ export const initialProducts = [
   {
     id: 7,
     name: "Merino Wool Sweater",
+    description:
+      "A cozy merino wool sweater with a relaxed crew-neck fit that delivers warmth without bulk. The fine-gauge knit provides a smooth hand feel, while natural temperature regulation makes it perfect for layering in any season.",
     price: 139,
     originalPrice: null,
     category: "Tops",
@@ -101,6 +115,8 @@ export const initialProducts = [
   {
     id: 8,
     name: "Pleated Midi Skirt",
+    description:
+      "A sophisticated pleated midi skirt that adds instant polish to any outfit. The accordion pleats create beautiful movement, while the elasticized waistband ensures a comfortable, flattering fit throughout the day.",
     price: 99,
     originalPrice: 129,
     category: "Bottoms",
@@ -115,6 +131,8 @@ export const initialProducts = [
   {
     id: 9,
     name: "Denim Jacket Classic",
+    description:
+      "A timeless denim jacket built from premium heavyweight cotton with a lived-in wash. The classic trucker silhouette features button-flap chest pockets and adjustable waist tabs, delivering authentic Americana style that only gets better with age.",
     price: 169,
     originalPrice: null,
     category: "Outerwear",
@@ -129,6 +147,8 @@ export const initialProducts = [
   {
     id: 10,
     name: "Relaxed Linen Shirt",
+    description:
+      "A relaxed-fit linen shirt that embodies effortless sophistication. The garment-washed fabric offers a soft, broken-in feel from the first wear, while the camp collar and curved hem give it a laid-back Mediterranean vibe.",
     price: 89,
     originalPrice: null,
     category: "Tops",
@@ -143,6 +163,8 @@ export const initialProducts = [
   {
     id: 11,
     name: "Velvet Evening Gown",
+    description:
+      "A show-stopping velvet evening gown with a figure-skimming silhouette that exudes glamour. The sumptuous velvet fabric catches the light beautifully, while the subtle V-neckline and open back add modern allure to a classic design.",
     price: 349,
     originalPrice: 429,
     category: "Dresses",
@@ -157,6 +179,8 @@ export const initialProducts = [
   {
     id: 12,
     name: "Stretch Slim Jeans",
+    description:
+      "Precision-engineered slim jeans with a hint of stretch for unrestricted movement. The tapered leg creates a sleek profile, while the mid-rise waist and five-pocket styling deliver everyday versatility without sacrificing comfort.",
     price: 109,
     originalPrice: null,
     category: "Bottoms",
@@ -171,6 +195,8 @@ export const initialProducts = [
   {
     id: 13,
     name: "Satin Wrap Blouse",
+    description:
+      "A lustrous satin wrap blouse with a flattering V-neckline and adjustable tie closure. The fluid fabric drapes elegantly across the body, making it a versatile piece that transitions seamlessly from office hours to evening outings.",
     price: 98,
     originalPrice: 120,
     category: "Tops",
@@ -185,6 +211,8 @@ export const initialProducts = [
   {
     id: 14,
     name: "Classic Trench Coat",
+    description:
+      "An iconic trench coat reimagined with modern proportions and water-resistant gabardine fabric. The double-breasted front, storm flap, and belted waist create a structured silhouette that has remained a style staple for decades.",
     price: 249,
     originalPrice: null,
     category: "Outerwear",
@@ -199,6 +227,8 @@ export const initialProducts = [
   {
     id: 15,
     name: "Tailored Ankle Trousers",
+    description:
+      "Crisply tailored ankle-length trousers with a slim fit that hits at the perfect spot above the shoe. The flat-front design and pressed crease deliver a sharp, tailored look, while the hidden elastic waistband adds unexpected comfort.",
     price: 129,
     originalPrice: null,
     category: "Bottoms",
@@ -213,6 +243,8 @@ export const initialProducts = [
   {
     id: 16,
     name: "Floral Slip Dress",
+    description:
+      "A delicate floral slip dress with abias-cut hem that skims the body beautifully. The adjustable spaghetti straps and lightweight chiffon fabric make it perfect for layering over a tee or wearing solo on warm evenings.",
     price: 145,
     originalPrice: 175,
     category: "Dresses",
@@ -227,6 +259,8 @@ export const initialProducts = [
   {
     id: 17,
     name: "Chunky Knit Cardigan",
+    description:
+      "A plush chunky knit cardigan with an oversized fit that wraps you in warmth. The ribbed cuffs and hem add texture, while the front patch pockets provide a cozy place to rest your hands on chilly days.",
     price: 115,
     originalPrice: null,
     category: "Tops",
@@ -241,6 +275,8 @@ export const initialProducts = [
   {
     id: 18,
     name: "Leather Biker Jacket",
+    description:
+      "A premium leather biker jacket crafted from full-grain lambskin that develops a rich patina over time. The asymmetric zip closure, quilted shoulder panels, and snap-down collar deliver authentic motorcycle-inspired style.",
     price: 320,
     originalPrice: 380,
     category: "Outerwear",
@@ -255,6 +291,8 @@ export const initialProducts = [
   {
     id: 19,
     name: "Ribbed Tank Top",
+    description:
+      "A versatile ribbed tank top made from stretch cotton that hugs the body for a sleek, form-fitting look. The scoop neckline and racerback design make it ideal for layering under blazers or wearing on its own during warmer weather.",
     price: 39,
     originalPrice: null,
     category: "Tops",
@@ -269,6 +307,8 @@ export const initialProducts = [
   {
     id: 20,
     name: "A-Line Denim Skirt",
+    description:
+      "A classic A-line denim skirt with a flattering flared silhouette that suits every body type. The medium wash and raw hem give it a casual, lived-in feel, while the back slit ensures easy movement throughout the day.",
     price: 85,
     originalPrice: 110,
     category: "Bottoms",
@@ -283,6 +323,8 @@ export const initialProducts = [
   {
     id: 21,
     name: "Boho Maxi Dress",
+    description:
+      "A free-spirited boho maxi dress adorned with a hand-inspired print and tiered skirt. The smocked elastic waist creates a flattering shape, while the flutter sleeves and maxi length bring romantic, festival-ready charm.",
     price: 165,
     originalPrice: null,
     category: "Dresses",
@@ -297,6 +339,8 @@ export const initialProducts = [
   {
     id: 22,
     name: "Quilted Puffer Coat",
+    description:
+      "A lightweight quilted puffer coat insulated with responsibly sourced down for exceptional warmth without the weight. The stand collar and elasticated cuffs lock in heat, while the packable design makes it a travel essential.",
     price: 210,
     originalPrice: 260,
     category: "Outerwear",
@@ -311,6 +355,8 @@ export const initialProducts = [
   {
     id: 23,
     name: "Oversized Graphic Hoodie",
+    description:
+      "An oversized graphic hoodie made from heavy-duty French terry cotton for a premium, substantial feel. The dropped shoulders and kangaroo pocket deliver laid-back streetwear vibes, while the bold graphic print makes a statement.",
     price: 79,
     originalPrice: null,
     category: "Tops",
@@ -325,6 +371,8 @@ export const initialProducts = [
   {
     id: 24,
     name: "Cargo Jogger Pants",
+    description:
+      "Functional cargo joggers that blend utility with modern comfort. The elastic waistband and cuffed ankles create a tapered silhouette, while multiple pockets provide practical storage for an on-the-go lifestyle.",
     price: 95,
     originalPrice: null,
     category: "Bottoms",

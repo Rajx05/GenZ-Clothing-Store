@@ -18,12 +18,13 @@ export const createOrder = async (req, res) => {
     }).populate("items.product");
 
     if (!cart) {
-      res.status(401).json({
+      return res.status(401).json({
         message: "cart not found",
       });
     }
 
     // calculate total price
+    cart.items = cart.items.filter((item) => item.product);
     const subtotal = cart.items.reduce((total, item) => {
       return total + item.product.price * item.quantity;
     }, 0);
@@ -36,7 +37,7 @@ export const createOrder = async (req, res) => {
 
     // create an order with razorpay api
     const razorpayOrder = await razorpay.orders.create({
-      amount: grandTotal * 100,
+      amount: Math.round(grandTotal * 100),
       currency: "INR",
       receipt: "shopping cart order",
       notes: {},
@@ -88,10 +89,10 @@ export const verify = async (req, res) => {
       });
 
       if (!cart) {
-        res.status(404).json({ message: "cart not found" });
+        return res.status(404).json({ message: "cart not found" });
       }
       if (!order) {
-        res.status(401).json({ message: "invalid order" });
+        return res.status(401).json({ message: "invalid order" });
       } else {
         // update order status
         order.paymentStatus = "Paid";
@@ -116,7 +117,11 @@ export const getOrders = async (req, res) => {
     const order = await Order.find({ user: req.user.id }).populate(
       "items.product",
     );
-    res.status(200).json({ order });
+    const filtered = order.map((o) => ({
+      ...o.toObject(),
+      items: o.items.filter((item) => item.product),
+    }));
+    res.status(200).json({ order: filtered });
   } catch (error) {
     res
       .status(500)

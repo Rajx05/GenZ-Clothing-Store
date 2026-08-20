@@ -23,7 +23,7 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, config.JWT_SECRET);
 
     // Attach decoded user payload from token to req.user
-    req.user = { id: decoded.id };
+    req.user = { id: decoded.id, role: decoded.role };
 
     next();
   } catch (error) {

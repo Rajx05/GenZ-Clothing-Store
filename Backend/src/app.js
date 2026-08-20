@@ -7,6 +7,7 @@ import authRouter from "./routes/public/auth.routes.js";
 import productRouter from "./routes/public/product.routes.js";
 import cartRouter from "./routes/private/cart.routes.js";
 import orderRouter from "./routes/private/order.routes.js";
+import sellerProductsRouter from "./routes/private/sellerProducts.routes.js";
 
 const app = express();
 
@@ -42,5 +43,6 @@ app.use("/api/products", productRouter);
 // private routes
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/seller-products", sellerProductsRouter);
 
 export default app;

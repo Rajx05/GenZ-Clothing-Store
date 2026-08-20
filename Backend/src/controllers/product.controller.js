@@ -41,16 +41,16 @@ export const getProducts = async (req, res) => {
     let sortQuery = {};
     switch (sortBy) {
       case "price-low":
-        sortQuery = { price: 1 }; // Ascending
+        sortQuery = { price: 1, _id: 1 };
         break;
       case "price-high":
-        sortQuery = { price: -1 }; // Descending
+        sortQuery = { price: -1, _id: 1 };
         break;
       case "rating":
-        sortQuery = { rating: -1 }; // Highest rated first
+        sortQuery = { rating: -1, _id: 1 };
         break;
       default:
-        sortQuery = { createdAt: -1 }; // Featured / Default: newest first
+        sortQuery = { createdAt: -1, _id: 1 };
         break;
     }
 

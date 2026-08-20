@@ -17,6 +17,12 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "password is required"],
   },
+  listed_products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
   verified: {
     type: Boolean,
     default: false,
