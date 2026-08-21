@@ -17,6 +17,12 @@ const userSchema = mongoose.Schema({
     type: String,
     required: [true, "password is required"],
   },
+
+  name: {
+    type: String,
+    required: true,
+  },
+
   listed_products: [
     {
       type: mongoose.Schema.Types.ObjectId,

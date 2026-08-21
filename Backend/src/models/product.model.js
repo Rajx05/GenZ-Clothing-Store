@@ -21,7 +21,12 @@ const productSchema = new mongoose.Schema(
     rating: { type: Number, default: 0 },
     reviews: { type: Number, default: 0 },
     badge: { type: String, default: null },
-    image: { type: String, required: true },
+    image: [
+      {
+        url: { type: String, required: true },
+        public_id: { type: String, required: true },
+      },
+    ],
   },
   { timestamps: true },
 );

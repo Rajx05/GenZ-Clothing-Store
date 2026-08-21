@@ -12,7 +12,7 @@ import {
 } from "../utils/utils.js";
 
 export async function register(req, res) {
-  const { username, email, password } = req.body;
+  const { username, email, password, name } = req.body;
   const role = ["buyer", "seller"].includes(req.body.role)
     ? req.body.role
     : "buyer";
@@ -39,6 +39,7 @@ export async function register(req, res) {
     email,
     password: hashedPassword,
     role,
+    name,
   });
 
   const otp = generateOtp();
@@ -60,6 +61,7 @@ export async function register(req, res) {
       id: user._id,
       username: user.username,
       email: user.email,
+      name: user.name,
       verified: user.verified,
       role: user.role,
     },
@@ -134,6 +136,7 @@ export async function login(req, res) {
       user: {
         email: user.email,
         username: user.username,
+        name: user.name,
         verified: user.verified,
         role: user.role,
       },
@@ -233,6 +236,7 @@ export async function verifyOtp(req, res) {
     user: {
       username: user.username,
       email: user.email,
+      name: user.name,
       verified: user.verified,
       role: user.role,
     },
@@ -315,6 +319,7 @@ export async function refreshToken(req, res) {
     user: {
       username: user.username,
       email: user.email,
+      name: user.name,
       verified: user.verified,
       role: user.role,
     },
@@ -344,6 +349,7 @@ export async function verifyToken(req, res) {
     user: {
       username: user.username,
       email: user.email,
+      name: user.name,
       verified: user.verified,
       role: user.role,
     },

@@ -26,6 +26,20 @@ const uploadImage = (buffer) => {
   });
 };
 
+const deleteImage = async (publicId) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    console.log(result);
+    // { result: 'ok' }
+
+    return result;
+  } catch (error) {
+    console.error("Cloudinary deletion failed:", error);
+    throw error;
+  }
+};
+
 const createImageUrl = async (publicId) => {
   let imageUrl = cloudinary.url(publicId, {
     transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
@@ -59,7 +73,12 @@ export const addProduct = async (req, res) => {
       sizes: data.sizes,
       colors: data.colors,
       user: id,
-      image: url,
+      image: [
+        {
+          url: url,
+          public_id: public_id.public_id,
+        },
+      ],
       originalPrice: data.originalPrice,
       badge: data.badge,
       stock: data.stock,
@@ -90,7 +109,7 @@ export const getSellerProducts = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({
+    const product = await Product.find({
       _id: req.params.id,
       user: req.user.id,
     });
@@ -100,6 +119,8 @@ export const deleteProduct = async (req, res) => {
         .status(404)
         .json({ message: "Product not found or not owned by you" });
     }
+    deleteImage(product[0].image[0].public_id);
+    await Product.findByIdAndDelete(req.params.id);
 
     return res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
