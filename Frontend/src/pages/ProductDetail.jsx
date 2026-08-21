@@ -184,7 +184,7 @@ export default function ProductDetail() {
           {/* Left Column: Image */}
           <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-[400px] xl:w-[440px] shrink-0 relative rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-xl group aspect-[3/4] lg:h-[500px] xl:h-[540px] lg:aspect-auto">
             <img
-              src={product.image}
+              src={product.image[0].url}
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -238,10 +238,14 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 border-b border-gray-100 dark:border-gray-800 pb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-2 border-b border-gray-100 dark:border-gray-800 pb-4">
               {product.description || "No description available."}
             </p>
+            <div className="text-sm text-gray-600 dark:text-gray-400 gap-2 flex flex-col p-2 mb-4 border-b border-gray-100 dark:border-gray-800">
+              <div>Seller: {product.user.name}</div>
 
+              <div>email: {product.user.email}</div>
+            </div>
             {/* Color Selector */}
             <div className="mb-4">
               <p className="text-xs font-semibold mb-2">Color</p>

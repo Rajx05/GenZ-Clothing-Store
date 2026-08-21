@@ -16,7 +16,6 @@ import {
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
-import { PRODUCTS } from "../data/constants";
 import { StatCardSkeleton } from "../components/Skeleton";
 import Avatar from "../components/profile/Avatar";
 import SettingsPanel from "../components/profile/SettingsPanel";
@@ -40,7 +39,7 @@ function Sidebar({ user, active, onSelect, onLogout }) {
         <Avatar user={user} size="lg" />
         <div className="min-w-0">
           <h3 className="font-display text-lg font-bold text-gray-900 dark:text-gray-100 truncate">
-            {user?.username || "Member"}
+            {user?.name || user?.username || "Member"}
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
             {user?.email || "—"}
@@ -196,7 +195,7 @@ function OverviewPanel({ user, stats, onSelect, cartLoading }) {
           ACCOUNT OVERVIEW
         </span>
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-          Welcome back, {user?.username || "Member"}
+          Welcome back, {user?.name || user?.username || "Member"}
         </h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
           Here&apos;s a snapshot of your shopping activity at a glance.
@@ -288,7 +287,7 @@ function WishlistPanel({ wishedProducts, wishlistCount }) {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {wishedProducts.map((product, i) => (
               <motion.div
-                key={product.id}
+                key={product._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...spring, delay: i * 0.05 }}
@@ -356,12 +355,13 @@ function WishlistPanel({ wishedProducts, wishlistCount }) {
 // ------------------------------- main page -------------------------------//
 
 export default function CustomerDashboard() {
-  const { setToast, wishlist, cartItems, cartLoading, fetchCartItems } =
+  const { setToast, wishlist, cartItems, cartLoading, fetchCartItems, getProducts } =
     useApp();
   const { loggedIn, setLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
 
   const [active, setActive] = useState("overview");
+  const [allProducts, setAllProducts] = useState([]);
   const loggedOutRef = useRef(false);
 
   // Redirect to login if not authenticated (skip once user logs out on purpose)
@@ -377,10 +377,20 @@ export default function CustomerDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedIn.status]);
 
+  // Fetch all products for wishlist matching
+  useEffect(() => {
+    if (loggedIn.status) {
+      getProducts({ limit: 100 }).then((products) => {
+        if (products) setAllProducts(products);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn.status]);
+
   if (!loggedIn.status) return null;
 
   const user = loggedIn.user || {};
-  const wishedProducts = PRODUCTS.filter((p) => wishlist?.includes(p.id)).slice(
+  const wishedProducts = allProducts.filter((p) => wishlist?.includes(p._id)).slice(
     0,
     6,
   );

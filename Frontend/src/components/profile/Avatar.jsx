@@ -19,7 +19,7 @@ export default function Avatar({ user, size = "md" }) {
           isLarge ? "w-16 h-16 text-xl" : "w-10 h-10 text-sm"
         }`}
       >
-        {getInitials(user?.username)}
+        {getInitials(user?.name || user?.username)}
       </div>
       {isVerified && (
         <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center border-2 border-white dark:border-gray-900">

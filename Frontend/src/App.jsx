@@ -60,7 +60,7 @@ function App() {
   useEffect(() => {}, [loggedIn.status]);
 
   useEffect(() => {
-    localStorage.setItem("user-wishlist", JSON.stringify(wishlist));
+    localStorage.setItem("abc-wishlist", JSON.stringify(wishlist));
   }, [wishlist]);
 
   return (

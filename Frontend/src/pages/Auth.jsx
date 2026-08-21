@@ -93,6 +93,7 @@ export default function Auth() {
 
   // ── Form fields
   const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [emailOrUsername, setEmailOrUsername] = useState("");
 
@@ -133,6 +134,7 @@ export default function Auth() {
   // ── Validate register / login form
   const validateRegisterForm = () => {
     const errs = {};
+    if (!name.trim()) errs.name = "Full name is required";
     if (!username.trim()) errs.username = "Username is required";
     if (!email.trim()) {
       errs.email = "Email is required";
@@ -217,6 +219,7 @@ export default function Auth() {
     try {
       const res = await axios.post("/auth/register", {
         username: username,
+        name: name,
         email: email,
         password: password,
         role: role,
@@ -279,7 +282,7 @@ export default function Auth() {
       await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, role }),
+        body: JSON.stringify({ username, name, email, password, role }),
       }).then((res) => {
         if (!res.ok) throw new Error();
       });
@@ -486,6 +489,23 @@ export default function Auth() {
                   )}
 
                   <form onSubmit={handleFormSubmit} className="space-y-5">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={inputCls("name")}
+                        placeholder="John Doe"
+                      />
+                      {errors.name && (
+                        <p className="text-xs text-red-500 mt-1 font-medium">
+                          {errors.name}
+                        </p>
+                      )}
+                    </div>
                     <div>
                       <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                         Username

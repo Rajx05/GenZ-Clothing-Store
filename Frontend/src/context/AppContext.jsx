@@ -137,7 +137,7 @@ export const AppProvider = ({ children }) => {
           size,
           color,
         });
-        console.log("product:", response.data.product);
+        // console.log("product:", response.data.product);
         const newProduct = response.data.product;
 
         setCartItems((prev) => {

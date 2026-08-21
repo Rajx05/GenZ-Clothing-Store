@@ -128,7 +128,7 @@ function SidebarContent({ user, active, onSelect, onLogout, onClose }) {
           <Avatar user={user} />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-              {user?.username || "Member"}
+              {user?.name || user?.username || "Member"}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
               {user?.email || "—"}

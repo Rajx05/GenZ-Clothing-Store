@@ -1,19 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
-import { PRODUCTS } from "../data/constants";
 import { ProductCard } from "../components/ProductCard";
 
 export default function Wishlist() {
-  const { wishlist } = useApp();
+  const { wishlist, getProducts } = useApp();
+  const [wishedProducts, setWishedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Find favorited products
-  const wishedProducts = PRODUCTS.filter(
-    (p) => wishlist && wishlist.includes(p.id),
-  );
+  useEffect(() => {
+    if (!wishlist || wishlist.length === 0) {
+      setWishedProducts([]);
+      setLoading(false);
+      return;
+    }
+
+    const fetchWished = async () => {
+      setLoading(true);
+      try {
+        const allProducts = await getProducts({ limit: 100 });
+        const matched = (allProducts || []).filter(
+          (p) => wishlist.includes(p._id),
+        );
+        setWishedProducts(matched);
+      } catch {
+        setWishedProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWished();
+  }, [wishlist, getProducts]);
 
   return (
     <div className="py-12 md:py-20 min-h-[60vh]">
@@ -30,7 +51,16 @@ export default function Wishlist() {
 
         {/* Grid or Empty State */}
         <AnimatePresence mode="wait">
-          {wishedProducts.length > 0 ? (
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl bg-gray-100 dark:bg-gray-800 animate-pulse aspect-[3/4]"
+                />
+              ))}
+            </div>
+          ) : wishedProducts.length > 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -38,7 +68,7 @@ export default function Wishlist() {
               className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
             >
               {wishedProducts.map((product, i) => (
-                <ProductCard key={product.id} product={product} index={i} />
+                <ProductCard key={product._id} product={product} index={i} />
               ))}
             </motion.div>
           ) : (

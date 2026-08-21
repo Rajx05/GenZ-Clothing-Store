@@ -398,11 +398,19 @@ function ProductFormModal({ initial, onSave, onClose, submitting }) {
               className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-xs font-semibold tracking-wider shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting && (
-                <FontAwesomeIcon icon={faSpinner} spin className="text-[10px]" />
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  spin
+                  className="text-[10px]"
+                />
               )}
               {submitting
-                ? isEdit ? "SAVING..." : "ADDING..."
-                : isEdit ? "SAVE CHANGES" : "ADD PRODUCT"}
+                ? isEdit
+                  ? "SAVING..."
+                  : "ADDING..."
+                : isEdit
+                  ? "SAVE CHANGES"
+                  : "ADD PRODUCT"}
             </motion.button>
           </div>
         </form>
@@ -651,7 +659,7 @@ export default function ProductsPanel({ setToast }) {
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
                   <img
-                    src={product.image}
+                    src={product.image[0].url}
                     alt={product.name}
                     className="h-full w-full object-cover"
                     loading="lazy"

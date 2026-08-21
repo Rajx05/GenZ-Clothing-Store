@@ -7,7 +7,10 @@ import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { StarRating } from "./StarRating";
 
-export const ProductCard = forwardRef(function ProductCard({ product, index }, ref) {
+export const ProductCard = forwardRef(function ProductCard(
+  { product, index },
+  ref,
+) {
   const { addToCart, toggleWishlist, wishlist } = useApp();
   const navigate = useNavigate();
   const [selectedSize] = useState(null);
@@ -32,7 +35,7 @@ export const ProductCard = forwardRef(function ProductCard({ product, index }, r
       >
         {!imageLoaded && <div className="absolute inset-0 skeleton"></div>}
         <img
-          src={product.image}
+          src={product.image[0].url}
           alt={product.name}
           className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           onLoad={() => setImageLoaded(true)}

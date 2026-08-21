@@ -62,6 +62,8 @@ export function Navbar() {
     navigate(`/shop?search=${encodeURIComponent(e.target.value.trim())}`);
   };
 
+  console.log("role:", role);
+
   return (
     <>
       <motion.header
@@ -168,22 +170,26 @@ export function Navbar() {
 
               {/* Wishlist */}
 
-              {role === "buyer" && (
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
-                  onClick={() => navigate("/wishlist")}
-                  aria-label="Wishlist"
-                >
-                  <FontAwesomeIcon icon={faHeartRegular} className="text-lg" />
-                  {wishlist && wishlist.length > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold">
-                      {wishlist.length}
-                    </span>
-                  )}
-                </motion.button>
-              )}
+              {role === "buyer" ||
+                (role === undefined && (
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative"
+                    onClick={() => navigate("/wishlist")}
+                    aria-label="Wishlist"
+                  >
+                    <FontAwesomeIcon
+                      icon={faHeartRegular}
+                      className="text-lg"
+                    />
+                    {wishlist && wishlist.length > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] flex items-center justify-center font-bold">
+                        {wishlist.length}
+                      </span>
+                    )}
+                  </motion.button>
+                ))}
 
               {/* Cart */}
               {role === "buyer" && (
