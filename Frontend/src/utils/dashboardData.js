@@ -38,7 +38,7 @@ function sumMonth(orders, target) {
 }
 
 const pctChange = (current, previous) =>
-  previous > 0 ? ((current - previous) / previous) * 100 : 0;
+  previous > 0 ? ((current - previous) / previous) * 100 : null;
 
 export function buildRevenueSeries(orders = [], period = "6m") {
   const n = period === "12m" ? 12 : 6;
@@ -112,13 +112,13 @@ export function computeStats(orders = []) {
     return {
       revenue: 0,
       revenueFrom: 0,
-      revenueChange: 0,
+      revenueChange: null,
       activeCustomers: 0,
       customersFrom: 0,
-      customersChange: 0,
+      customersChange: null,
       churnRate: 0,
-      churnFrom: 0,
-      churnChange: 0,
+      churnFrom: null,
+      churnChange: null,
     };
   }
   const now = new Date();
@@ -127,19 +127,46 @@ export function computeStats(orders = []) {
   const revenue = sumMonth(orders, now);
   const revenueFrom = sumMonth(orders, prevMonth);
 
-  const paidCount = orders.filter((o) => o.paymentStatus === "Paid").length;
-  const churn = orders.length > 0 ? (1 - paidCount / orders.length) * 100 : 0;
+  const currentOrders = orders.filter(
+    (o) => o.createdAt && sameMonth(o.createdAt, now),
+  );
+  const previousOrders = orders.filter(
+    (o) => o.createdAt && sameMonth(o.createdAt, prevMonth),
+  );
+
+  const uniqueCustomers = (list) => {
+    const ids = new Set(
+      list.map((o) => o.user?._id || o.user?.username).filter(Boolean),
+    );
+    return ids.size;
+  };
+
+  const activeCustomers = uniqueCustomers(currentOrders);
+  const customersFrom = previousOrders.length > 0 ? uniqueCustomers(previousOrders) : 0;
+
+  const churnForPeriod = (periodOrders) => {
+    if (periodOrders.length === 0) return null;
+    const paid = periodOrders.filter((o) => o.paymentStatus === "Paid").length;
+    return Number(((1 - paid / periodOrders.length) * 100).toFixed(1));
+  };
+
+  const churnRate = churnForPeriod(currentOrders);
+  const churnFrom = churnForPeriod(previousOrders);
+  const churnChange =
+    churnRate !== null && churnFrom !== null
+      ? Number((churnRate - churnFrom).toFixed(1))
+      : null;
 
   return {
     revenue,
     revenueFrom,
     revenueChange: pctChange(revenue, revenueFrom),
-    activeCustomers: orders.length || 0,
-    customersFrom: Math.max(orders.length - 1, 0),
-    customersChange: orders.length > 1 ? 100 / (orders.length - 1) : 0,
-    churnRate: Number(churn.toFixed(1)),
-    churnFrom: Number((churn + 0.5).toFixed(1)),
-    churnChange: -1,
+    activeCustomers,
+    customersFrom,
+    customersChange: pctChange(activeCustomers, customersFrom),
+    churnRate: churnRate ?? 0,
+    churnFrom,
+    churnChange,
   };
 }
 

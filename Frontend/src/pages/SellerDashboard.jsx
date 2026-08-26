@@ -205,7 +205,8 @@ function DashboardHeader({ title, onMenuClick, onNewReport }) {
   );
 }
 
-function TrendBadge({ value, decrease = false }) {
+function TrendBadge({ value, decrease = false, suffix = "%" }) {
+  const display = value == null ? "—" : `${value}${suffix}`;
   return (
     <span
       className={`inline-flex items-center gap-1.5 self-end rounded-sm p-1 text-xs font-medium ${
@@ -234,12 +235,12 @@ function TrendBadge({ value, decrease = false }) {
         />
       </svg>
       <span className="sr-only">{decrease ? "Decrease: " : "Increase: "}</span>
-      {value}%
+      {display}
     </span>
   );
 }
 
-function StatCard({ label, value, from, badge, decrease = false, children }) {
+function StatCard({ label, value, from, badge, decrease = false, suffix, children }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -247,7 +248,7 @@ function StatCard({ label, value, from, badge, decrease = false, children }) {
       transition={{ ...spring }}
       className="flex flex-col gap-3 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 sm:p-6 shadow-sm"
     >
-      <TrendBadge value={badge} decrease={decrease} />
+      <TrendBadge value={badge} decrease={decrease} suffix={suffix} />
       <div>
         <strong className="block text-sm font-medium text-gray-600 dark:text-gray-50">
           {label}
@@ -388,7 +389,11 @@ function OrderStatusDonut({ breakdown, dark }) {
       },
       tooltip: {
         callbacks: {
-          label: (item) => `${item.label}: ${item.formattedValue}%`,
+          label: (item) => {
+            const total = item.dataset.data.reduce((a, b) => a + b, 0);
+            const pct = total > 0 ? ((item.raw / total) * 100).toFixed(0) : 0;
+            return `${item.label}: ${pct}%`;
+          },
         },
       },
     },
@@ -416,9 +421,9 @@ function OverviewPanel({
         <StatCard
           label="Monthly revenue"
           value={formatMoney(stats.revenue)}
-          from={formatMoney(stats.revenueFrom)}
-          badge={Math.abs(stats.revenueChange).toFixed(1)}
-          decrease={stats.revenueChange < 0}
+          from={stats.revenueFrom > 0 ? formatMoney(stats.revenueFrom) : "—"}
+          badge={stats.revenueChange != null ? Math.abs(stats.revenueChange).toFixed(1) : "New"}
+          decrease={stats.revenueChange != null && stats.revenueChange < 0}
         >
           <RevenueSparkline series={revenue["6m"]} />
         </StatCard>
@@ -426,17 +431,18 @@ function OverviewPanel({
         <StatCard
           label="Active customers"
           value={stats.activeCustomers.toLocaleString()}
-          from={stats.customersFrom.toLocaleString()}
-          badge={Math.abs(stats.customersChange).toFixed(1)}
-          decrease={stats.customersChange < 0}
+          from={stats.customersFrom > 0 ? stats.customersFrom.toLocaleString() : "—"}
+          badge={stats.customersChange != null ? Math.abs(stats.customersChange).toFixed(1) : "New"}
+          decrease={stats.customersChange != null && stats.customersChange < 0}
         />
 
         <StatCard
           label="Churn rate"
           value={`${stats.churnRate}%`}
-          from={`${stats.churnFrom}%`}
-          badge={Math.abs(stats.churnChange).toFixed(1)}
-          decrease={stats.churnChange < 0}
+          from={stats.churnFrom != null ? `${stats.churnFrom}%` : "—"}
+          badge={stats.churnChange != null ? Math.abs(stats.churnChange).toFixed(1) : "New"}
+          decrease={stats.churnChange != null && stats.churnChange > 0}
+          suffix="pp"
         />
       </div>
 
