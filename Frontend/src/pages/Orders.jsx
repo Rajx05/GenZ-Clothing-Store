@@ -174,7 +174,7 @@ export default function Orders() {
                     {/* Image */}
                     <div className="w-16 h-20 sm:w-20 sm:h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 shrink-0">
                       <img
-                        src={item.product.image}
+                        src={item.product.image[0].url}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                       />

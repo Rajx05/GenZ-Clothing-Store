@@ -92,7 +92,11 @@ export function CartSidebar() {
             {/* Items */}
             <div className="flex-1 overflow-y-auto p-6">
               {cartLoading && validItems.length === 0 ? (
-                <div className="space-y-4" aria-busy="true" aria-label="Loading bag">
+                <div
+                  className="space-y-4"
+                  aria-busy="true"
+                  aria-label="Loading bag"
+                >
                   <CartItemSkeleton slim />
                   <CartItemSkeleton slim />
                   <CartItemSkeleton slim />
@@ -137,7 +141,7 @@ export function CartSidebar() {
                       >
                         <div className="w-20 h-24 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
                           <img
-                            src={item.product.image}
+                            src={item.product.image[0].url}
                             alt={item.product.name}
                             className="w-full h-full object-cover"
                           />
@@ -161,7 +165,10 @@ export function CartSidebar() {
                                 }
                                 className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                               >
-                                <FontAwesomeIcon icon={faMinus} className="text-[10px]" />
+                                <FontAwesomeIcon
+                                  icon={faMinus}
+                                  className="text-[10px]"
+                                />
                               </button>
                               <span className="text-sm font-medium w-6 text-center">
                                 {item.quantity}
@@ -172,7 +179,10 @@ export function CartSidebar() {
                                 }
                                 className="w-7 h-7 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-xs hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                               >
-                                <FontAwesomeIcon icon={faPlus} className="text-[10px]" />
+                                <FontAwesomeIcon
+                                  icon={faPlus}
+                                  className="text-[10px]"
+                                />
                               </button>
                             </div>
                             <div className="flex items-center gap-3">
@@ -183,7 +193,10 @@ export function CartSidebar() {
                                 onClick={() => removeFromCart(item._id)}
                                 className="text-gray-400 hover:text-red-500 transition"
                               >
-                                <FontAwesomeIcon icon={faTrashCan} className="text-xs" />
+                                <FontAwesomeIcon
+                                  icon={faTrashCan}
+                                  className="text-xs"
+                                />
                               </button>
                             </div>
                           </div>

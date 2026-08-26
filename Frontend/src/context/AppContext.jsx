@@ -82,6 +82,9 @@ export const AppProvider = ({ children }) => {
   // Seller Products
   const [sellerProducts, setSellerProducts] = useState([]);
 
+  // Seller Orders (orders containing seller's products)
+  const [sellerOrders, setSellerOrders] = useState([]);
+
   // Cart
   const [cart, setCart] = useState(() => {
     try {
@@ -256,6 +259,37 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
+  // fetch orders containing this seller's products
+  const getSellerOrders = useCallback(async () => {
+    try {
+      const response = await axiosPrivate.get("/seller-products/seller-orders");
+      setSellerOrders(response.data.orders);
+    } catch (error) {
+      console.error("Error fetching seller orders:", error);
+    }
+  }, []);
+
+  // update an existing seller product
+  const updateSellerProduct = useCallback(async (productId, data) => {
+    try {
+      const formData = new FormData();
+      for (const [key, value] of Object.entries(data)) {
+        if (key === "sizes" || key === "colors") {
+          formData.append(key, JSON.stringify(value));
+        } else if (key === "imageFile") {
+          // skip — image updates not supported
+        } else if (value !== undefined && value !== null) {
+          formData.append(key, value);
+        }
+      }
+      const response = await axiosPrivate.put(`/seller-products/${productId}`, formData);
+      return response.data.product;
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  }, []);
+
   const paymentVerification = useCallback(async (order) => {
     try {
       const response = await axiosPrivate.post("/order/verify", {
@@ -380,6 +414,9 @@ export const AppProvider = ({ children }) => {
         sellerProducts,
         setSellerProducts,
         getSellerProducts,
+        sellerOrders,
+        getSellerOrders,
+        updateSellerProduct,
         cart,
         addToCart,
         updateQuantity,

@@ -825,13 +825,13 @@ export default function SellerDashboard() {
     setToast,
     cartLoading,
     fetchCartItems,
-    order,
-    fetchOrders,
+    sellerOrders,
+    getSellerOrders,
     darkMode,
   } = useApp();
   const { loggedIn, setLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
-
+  console.log("seller orders:", sellerOrders);
   const [searchParams, setSearchParams] = useSearchParams();
   const active = searchParams.get("tab") || "overview";
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -844,11 +844,11 @@ export default function SellerDashboard() {
     }
   }, [loggedIn.status, navigate]);
 
-  // Refresh cart + orders for this session — the App-level fetch runs before login and 401s
+  // Refresh cart + seller orders for this session
   useEffect(() => {
     if (loggedIn.status) {
       fetchCartItems();
-      fetchOrders();
+      getSellerOrders();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedIn.status]);
@@ -865,22 +865,25 @@ export default function SellerDashboard() {
   const user = loggedIn.user || {};
   const customer = user?.username || "You";
 
-  const stats = useMemo(() => computeStats(order), [order]);
+  const stats = useMemo(() => computeStats(sellerOrders), [sellerOrders]);
   const revenue = useMemo(
     () => ({
-      "6m": buildRevenueSeries(order, "6m"),
-      "12m": buildRevenueSeries(order, "12m"),
+      "6m": buildRevenueSeries(sellerOrders, "6m"),
+      "12m": buildRevenueSeries(sellerOrders, "12m"),
     }),
-    [order],
+    [sellerOrders],
   );
-  const statusBreakdown = useMemo(() => buildStatusBreakdown(order), [order]);
+  const statusBreakdown = useMemo(
+    () => buildStatusBreakdown(sellerOrders),
+    [sellerOrders],
+  );
   const recentOrders = useMemo(
-    () => buildRecentOrders(order, customer),
-    [order, customer],
+    () => buildRecentOrders(sellerOrders, customer),
+    [sellerOrders, customer],
   );
   const customers = useMemo(
-    () => buildCustomerRows(order, customer),
-    [order, customer],
+    () => buildCustomerRows(sellerOrders, customer),
+    [sellerOrders, customer],
   );
 
   if (!loggedIn.status) return null;
@@ -989,7 +992,7 @@ export default function SellerDashboard() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={spring}
               >
-                <OrdersPanel orders={order} customer={customer} />
+                <OrdersPanel orders={sellerOrders} customer={customer} />
               </motion.main>
             )}
 
@@ -1001,7 +1004,7 @@ export default function SellerDashboard() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={spring}
               >
-                <BillingPanel orders={order} />
+                <BillingPanel orders={sellerOrders} />
               </motion.main>
             )}
 

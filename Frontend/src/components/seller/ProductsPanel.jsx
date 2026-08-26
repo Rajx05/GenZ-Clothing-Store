@@ -420,7 +420,12 @@ function ProductFormModal({ initial, onSave, onClose, submitting }) {
 }
 
 export default function ProductsPanel({ setToast }) {
-  const { sellerProducts, setSellerProducts, getSellerProducts } = useApp();
+  const {
+    sellerProducts,
+    setSellerProducts,
+    getSellerProducts,
+    updateSellerProduct,
+  } = useApp();
 
   useEffect(() => {
     getSellerProducts();
@@ -475,13 +480,23 @@ export default function ProductsPanel({ setToast }) {
   const handleSave = async (data) => {
     // IF EDITING EXISTING PRODUCT
     if (editing) {
-      setSellerProducts((prev) =>
-        prev.map((p) => (p._id === editing._id ? { ...p, ...data } : p)),
-      );
-      setToast?.({
-        message: `"${data.name}" updated successfully!`,
-        type: "success",
-      });
+      try {
+        setSubmitting(true);
+        await updateSellerProduct(editing._id, data);
+        await getSellerProducts();
+        setToast?.({
+          message: `"${data.name}" updated successfully!`,
+          type: "success",
+        });
+      } catch (error) {
+        console.error("Error updating product:", error);
+        setToast?.({
+          message: "Failed to update product. Please try again.",
+          type: "error",
+        });
+      } finally {
+        setSubmitting(false);
+      }
     }
 
     // IF ADDING NEW PRODUCT
@@ -588,13 +603,13 @@ export default function ProductsPanel({ setToast }) {
         {statCards.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 shadow-sm"
+            className=" flex gap-2 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-2 shadow-sm"
           >
-            <p className="text-2xl font-display font-bold text-gray-900 dark:text-gray-100">
-              {s.value}
+            <p className="text-xs  font-semibold text-gray-400 uppercase tracking-wider mt-1">
+              {s.label}:
             </p>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mt-1">
-              {s.label}
+            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {s.value}
             </p>
           </div>
         ))}

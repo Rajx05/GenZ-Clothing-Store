@@ -13,79 +13,6 @@ const MONTHS_SHORT = [
   "Dec",
 ];
 
-export const DEMO_REVENUE = {
-  "6m": {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    values: [28000, 34000, 31000, 39000, 42000, 48000],
-  },
-  "12m": {
-    labels: [
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-    ],
-    values: [
-      19000, 21500, 20000, 23500, 25000, 27000, 28000, 34000, 31000, 39000,
-      42000, 48000,
-    ],
-  },
-};
-
-export const DEMO_RECENT_ORDERS = [
-  {
-    id: "#3921",
-    customer: "Nandor the Relentless",
-    status: "Paid",
-    amount: 412.0,
-  },
-  {
-    id: "#3920",
-    customer: "Laszlo Cravensworth",
-    status: "Pending",
-    amount: 128.5,
-  },
-  {
-    id: "#3919",
-    customer: "Nadja",
-    status: "Paid",
-    amount: 894.2,
-  },
-  {
-    id: "#3918",
-    customer: "Guillermo de la Cruz",
-    status: "Refunded",
-    amount: 56.0,
-  },
-];
-
-export const DEMO_CUSTOMERS = [
-  { name: "Nandor the Relentless", orders: 4, spent: 1284.0, email: "nandor@example.com" },
-  { name: "Laszlo Cravensworth", orders: 3, spent: 976.5, email: "laszlo@example.com" },
-  { name: "Nadja", orders: 2, spent: 894.2, email: "nadja@example.com" },
-  { name: "Guillermo de la Cruz", orders: 1, spent: 56.0, email: "guillermo@example.com" },
-];
-
-export const DEMO_STATS = {
-  revenue: 48204,
-  revenueFrom: 42910,
-  revenueChange: 12.4,
-  activeCustomers: 2318,
-  customersFrom: 2227,
-  customersChange: 4.1,
-  churnRate: 1.8,
-  churnFrom: 2.1,
-  churnChange: -2.6,
-};
-
 function lastNMonthLabels(n) {
   const labels = [];
   const now = new Date();
@@ -114,10 +41,11 @@ const pctChange = (current, previous) =>
   previous > 0 ? ((current - previous) / previous) * 100 : 0;
 
 export function buildRevenueSeries(orders = [], period = "6m") {
-  if (!orders || orders.length === 0) return DEMO_REVENUE[period];
   const n = period === "12m" ? 12 : 6;
-  const now = new Date();
   const labels = lastNMonthLabels(n);
+  if (!orders || orders.length === 0)
+    return { labels, values: Array(n).fill(0) };
+  const now = new Date();
   const values = labels.map((_, i) => {
     const month = new Date(now.getFullYear(), now.getMonth() - (n - 1 - i), 1);
     return sumMonth(orders, month);
@@ -127,7 +55,7 @@ export function buildRevenueSeries(orders = [], period = "6m") {
 
 export function buildStatusBreakdown(orders = []) {
   if (!orders || orders.length === 0) {
-    return { labels: ["Paid", "Pending", "Refunded"], values: [68, 22, 10] };
+    return { labels: ["Paid", "Pending", "Refunded"], values: [0, 0, 0] };
   }
   const counts = { Paid: 0, Pending: 0, Refunded: 0 };
   orders.forEach((o) => {
@@ -140,13 +68,13 @@ export function buildStatusBreakdown(orders = []) {
 }
 
 export function buildRecentOrders(orders = [], customer = "You", limit = 4) {
-  if (!orders || orders.length === 0) return DEMO_RECENT_ORDERS;
+  if (!orders || orders.length === 0) return [];
   return [...orders]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, limit)
     .map((o) => ({
       id: o.razorpayOrderId || `#${String(o._id).slice(-4)}`,
-      customer,
+      customer: o.user?.username || customer,
       status:
         o.paymentStatus === "Paid"
           ? "Paid"
@@ -158,24 +86,41 @@ export function buildRecentOrders(orders = [], customer = "You", limit = 4) {
 }
 
 export function buildCustomerRows(orders = [], customer = "You") {
-  if (!orders || orders.length === 0) return DEMO_CUSTOMERS;
+  if (!orders || orders.length === 0) return [];
   const rows = orders
     .filter((o) => o.createdAt)
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .map((o) => ({
       id: o.razorpayOrderId || o._id,
-      name: customer,
-      email: "",
+      name: o.user?.username || customer,
+      email: o.user?.email || "",
       total: o.totalAmount || 0,
       items: (o.items || []).reduce((n, it) => n + (it.quantity || 1), 0),
       date: o.createdAt,
-      status: o.paymentStatus === "Paid" ? "Paid" : o.paymentStatus === "Failed" ? "Refunded" : "Pending",
+      status:
+        o.paymentStatus === "Paid"
+          ? "Paid"
+          : o.paymentStatus === "Failed"
+            ? "Refunded"
+            : "Pending",
     }));
-  return rows.length > 0 ? rows : DEMO_CUSTOMERS;
+  return rows;
 }
 
 export function computeStats(orders = []) {
-  if (!orders || orders.length === 0) return DEMO_STATS;
+  if (!orders || orders.length === 0) {
+    return {
+      revenue: 0,
+      revenueFrom: 0,
+      revenueChange: 0,
+      activeCustomers: 0,
+      customersFrom: 0,
+      customersChange: 0,
+      churnRate: 0,
+      churnFrom: 0,
+      churnChange: 0,
+    };
+  }
   const now = new Date();
   const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
