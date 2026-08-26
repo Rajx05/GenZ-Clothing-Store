@@ -4,6 +4,8 @@ import {
   addProduct,
   getSellerProducts,
   deleteProduct,
+  updateProduct,
+  getSellerOrders,
 } from "../../controllers/sellerProducts.controller.js";
 import multer from "multer";
 
@@ -18,6 +20,8 @@ sellerProductsRouter.use(protect);
 
 sellerProductsRouter.post("/add", upload.single("image"), addProduct);
 sellerProductsRouter.get("/", getSellerProducts);
+sellerProductsRouter.get("/seller-orders", getSellerOrders);
+sellerProductsRouter.put("/:id", updateProduct);
 sellerProductsRouter.delete("/:id", deleteProduct);
 
 export default sellerProductsRouter;
