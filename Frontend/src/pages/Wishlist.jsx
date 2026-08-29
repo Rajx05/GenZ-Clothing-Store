@@ -67,8 +67,8 @@ export default function Wishlist() {
               exit={{ opacity: 0 }}
               className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
             >
-              {wishedProducts.map((product, i) => (
-                <ProductCard key={product._id} product={product} index={i} />
+              {wishedProducts.map((product) => (
+                <ProductCard key={product._id} product={product} />
               ))}
             </motion.div>
           ) : (

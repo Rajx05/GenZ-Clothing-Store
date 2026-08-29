@@ -675,12 +675,9 @@ export default function ProductsPanel({ setToast }) {
       >
         {filtered.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filtered.map((product, i) => (
-              <motion.div
+            {filtered.map((product) => (
+              <div
                 key={product._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...spring, delay: Math.min(i * 0.04, 0.4) }}
                 className="group relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 shadow-sm"
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
@@ -742,7 +739,7 @@ export default function ProductsPanel({ setToast }) {
                     <StockPill stock={product.stock} />
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         ) : (

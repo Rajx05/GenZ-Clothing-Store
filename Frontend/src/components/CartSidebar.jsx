@@ -128,7 +128,6 @@ export function CartSidebar() {
                     {validItems.map((item) => (
                       <motion.div
                         key={item._id}
-                        layout
                         initial={{ opacity: 0, x: 30 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{

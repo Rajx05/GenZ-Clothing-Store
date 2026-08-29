@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback, useMemo } from "react";
 import axios from "../api/axios.js";
 import axiosPrivate from "../api/axiosPrivate";
 import heroImgDesktop from "../images/hero.webp";
@@ -104,7 +104,7 @@ export const AppProvider = ({ children }) => {
 
   //------------------------------ functions--------------------------//
 
-  const toggleDark = () => setDarkMode((prev) => !prev);
+  const toggleDark = useCallback(() => setDarkMode((prev) => !prev), []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchCartItems = useCallback(async () => {
@@ -175,7 +175,7 @@ export const AppProvider = ({ children }) => {
     },
   );
 
-  const updateQuantity = async (itemId, newQty) => {
+  const updateQuantity = useCallback(async (itemId, newQty) => {
     if (newQty < 1) return;
     // Optimistic update for instant UI feedback
     setCartItems((prev) =>
@@ -192,7 +192,7 @@ export const AppProvider = ({ children }) => {
       console.error("Failed to update quantity", error);
       fetchCartItems(); // roll back to the server's version
     }
-  };
+  }, [fetchCartItems]);
 
   const removeFromCart = useCallback(async (productId) => {
     // console.log(productId);
@@ -388,53 +388,85 @@ export const AppProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const contextValue = useMemo(
+    () => ({
+      heroImgDesktop,
+      heroImgMobile,
+      darkMode,
+      setDarkMode,
+      toggleDark,
+      toast,
+      setToast,
+      selectedProduct,
+      setSelectedProduct,
+      activeFilter,
+      setActiveFilter,
+      currentView,
+      setCurrentView,
+      wishlist,
+      setWishlist,
+      toggleWishlist,
+      products,
+      productsLoading,
+      getProducts,
+      setProducts,
+      sellerProducts,
+      setSellerProducts,
+      getSellerProducts,
+      sellerOrders,
+      getSellerOrders,
+      updateSellerProduct,
+      cart,
+      addToCart,
+      updateQuantity,
+      removeFromCart,
+      setCart,
+      cartOpen,
+      setCartOpen,
+      cartItems,
+      cartLoading,
+      setCartItems,
+      fetchCartItems,
+      createOrder,
+      order,
+      setOrder,
+      orderLoading,
+      fetchOrders,
+    }),
+    [
+      darkMode,
+      toast,
+      selectedProduct,
+      activeFilter,
+      currentView,
+      wishlist,
+      products,
+      productsLoading,
+      sellerProducts,
+      sellerOrders,
+      cart,
+      cartOpen,
+      cartItems,
+      cartLoading,
+      order,
+      orderLoading,
+      toggleDark,
+      toggleWishlist,
+      getProducts,
+      getSellerProducts,
+      getSellerOrders,
+      updateSellerProduct,
+      addToCart,
+      updateQuantity,
+      removeFromCart,
+      fetchCartItems,
+      createOrder,
+      fetchOrders,
+    ],
+  );
+
   return (
-    <AppContext.Provider
-      value={{
-        heroImgDesktop,
-        heroImgMobile,
-        darkMode,
-        setDarkMode,
-        toggleDark,
-        toast,
-        setToast,
-        selectedProduct,
-        setSelectedProduct,
-        activeFilter,
-        setActiveFilter,
-        currentView,
-        setCurrentView,
-        wishlist,
-        setWishlist,
-        toggleWishlist,
-        products,
-        productsLoading,
-        getProducts,
-        setProducts,
-        sellerProducts,
-        setSellerProducts,
-        getSellerProducts,
-        sellerOrders,
-        getSellerOrders,
-        updateSellerProduct,
-        cart,
-        addToCart,
-        updateQuantity,
-        removeFromCart,
-        setCart,
-        cartOpen,
-        setCartOpen,
-        cartItems,
-        cartLoading,
-        setCartItems,
-        fetchCartItems,
-        createOrder,
-        order,
-        setOrder,
-        orderLoading,
-        fetchOrders,
-      }}
-    >
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

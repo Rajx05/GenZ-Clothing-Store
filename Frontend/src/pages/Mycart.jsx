@@ -195,12 +195,11 @@ export default function MyCart() {
         <div className="lg:col-span-8">
           <div className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {validItems.map((item, i) => {
+              {validItems.map((item) => {
                 const lineTotal = item.product.price * item.quantity;
                 return (
                   <motion.div
                     key={item._id}
-                    layout
                     initial={{ opacity: 0, y: 24, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{
@@ -209,7 +208,6 @@ export default function MyCart() {
                       scale: 0.94,
                       transition: { duration: 0.2, ease: "easeIn" },
                     }}
-                    transition={{ ...spring, delay: Math.min(i * 0.05, 0.5) }}
                     className="flex gap-4 sm:gap-5 bg-white dark:bg-gray-900 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow"
                   >
                     {/* Product Image */}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense, lazy } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Routes, Route } from "react-router-dom";
 
@@ -14,17 +14,17 @@ import { BackToTop } from "./components/BackToTop";
 import { Toast } from "./components/Toast";
 import { ScrollToTop } from "./components/ScrollToTop";
 
-// Pages
-import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Wishlist from "./pages/Wishlist";
-import Auth from "./pages/Auth";
-import Profile from "./pages/Profile";
-import MyCart from "./pages/Mycart";
-import Checkout from "./pages/Checkout";
-import Verify from "./pages/Verify";
-import Orders from "./pages/Orders";
+// Pages (code-split)
+const Home = lazy(() => import("./pages/Home"));
+const Shop = lazy(() => import("./pages/Shop"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Wishlist = lazy(() => import("./pages/Wishlist"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Profile = lazy(() => import("./pages/Profile"));
+const MyCart = lazy(() => import("./pages/Mycart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Verify = lazy(() => import("./pages/Verify"));
+const Orders = lazy(() => import("./pages/Orders"));
 
 function App() {
   const { loggedIn } = useAuth();
@@ -69,18 +69,26 @@ function App() {
       <Navbar />
 
       <main className="min-h-[70vh]">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/wishlist" element={<Wishlist />} />
-          <Route path="/login" element={<Auth />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/my-cart" element={<MyCart />} />
-          <Route path="/my-orders" element={<Orders />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/verify" element={<Verify />} />
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="flex min-h-[70vh] items-center justify-center">
+              <div className="size-10 animate-spin rounded-full border-2 border-gray-300 border-t-brand-600" />
+            </div>
+          }
+        >
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/login" element={<Auth />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/my-cart" element={<MyCart />} />
+            <Route path="/my-orders" element={<Orders />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/verify" element={<Verify />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />
