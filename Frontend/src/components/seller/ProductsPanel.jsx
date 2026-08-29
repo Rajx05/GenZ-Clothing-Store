@@ -564,7 +564,7 @@ export default function ProductsPanel({ setToast }) {
   return (
     <div className="space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={spring}
@@ -591,7 +591,7 @@ export default function ProductsPanel({ setToast }) {
           <FontAwesomeIcon icon={faPlus} />
           ADD PRODUCT
         </motion.button>
-      </motion.div>
+      </motion.div> */}
 
       {/* Mini stats */}
       <motion.div
@@ -620,8 +620,9 @@ export default function ProductsPanel({ setToast }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring, delay: 0.1 }}
-        className="flex flex-col sm:flex-row sm:items-center gap-4"
+        className="sticky top-20 dark:bg-slate-950 bg-white p-2 z-20 flex flex-col sm:flex-row sm:items-center gap-4"
       >
+        {/* Search bar */}
         <div className="relative flex-1">
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
@@ -635,6 +636,16 @@ export default function ProductsPanel({ setToast }) {
             className={`${inputCls()} pl-10`}
           />
         </div>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="button"
+          onClick={openAdd}
+          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
+        >
+          <FontAwesomeIcon icon={faPlus} />
+          ADD PRODUCT
+        </motion.button>
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
           {STOCK_META.map((f) => {
             const selected = filter === f.id;

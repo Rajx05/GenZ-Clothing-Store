@@ -32,14 +32,16 @@ import { Line, Doughnut } from "react-chartjs-2";
 import useApp from "../hooks/useApp";
 import useAuth from "../hooks/useAuth";
 import { StatCardSkeleton } from "../components/Skeleton";
-import Avatar, { getInitials } from "../components/profile/Avatar";
+import Avatar from "../components/profile/Avatar";
 import SettingsPanel from "../components/profile/SettingsPanel";
 import ProductsPanel from "../components/seller/ProductsPanel";
+import CustomersPanel from "../components/seller/CustomersPanel";
 import {
   buildRevenueSeries,
   buildStatusBreakdown,
   buildRecentOrders,
   buildCustomerRows,
+  buildNewCustomersSeries,
   computeStats,
   formatMoney,
 } from "../utils/dashboardData";
@@ -191,16 +193,17 @@ function DashboardHeader({ title, onMenuClick, onNewReport }) {
         <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {title}
         </h1>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="button"
+          onClick={() => {}}
+          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
+        >
+          <FontAwesomeIcon icon={faPlus} />
+          ADD PRODUCT
+        </motion.button>
       </div>
-
-      <button
-        type="button"
-        onClick={onNewReport}
-        className="inline-flex items-center gap-2 rounded-md bg-gray-900 dark:bg-white px-4 py-2 text-sm font-medium text-white dark:text-gray-900 transition hover:bg-gray-800 dark:hover:bg-gray-100"
-      >
-        <FontAwesomeIcon icon={faPlus} className="size-3.5" />
-        New report
-      </button>
     </header>
   );
 }
@@ -240,7 +243,15 @@ function TrendBadge({ value, decrease = false, suffix = "%" }) {
   );
 }
 
-function StatCard({ label, value, from, badge, decrease = false, suffix, children }) {
+function StatCard({
+  label,
+  value,
+  from,
+  badge,
+  decrease = false,
+  suffix,
+  children,
+}) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -422,7 +433,11 @@ function OverviewPanel({
           label="Monthly revenue"
           value={formatMoney(stats.revenue)}
           from={stats.revenueFrom > 0 ? formatMoney(stats.revenueFrom) : "—"}
-          badge={stats.revenueChange != null ? Math.abs(stats.revenueChange).toFixed(1) : "New"}
+          badge={
+            stats.revenueChange != null
+              ? Math.abs(stats.revenueChange).toFixed(1)
+              : "New"
+          }
           decrease={stats.revenueChange != null && stats.revenueChange < 0}
         >
           <RevenueSparkline series={revenue["6m"]} />
@@ -431,8 +446,14 @@ function OverviewPanel({
         <StatCard
           label="Active customers"
           value={stats.activeCustomers.toLocaleString()}
-          from={stats.customersFrom > 0 ? stats.customersFrom.toLocaleString() : "—"}
-          badge={stats.customersChange != null ? Math.abs(stats.customersChange).toFixed(1) : "New"}
+          from={
+            stats.customersFrom > 0 ? stats.customersFrom.toLocaleString() : "—"
+          }
+          badge={
+            stats.customersChange != null
+              ? Math.abs(stats.customersChange).toFixed(1)
+              : "New"
+          }
           decrease={stats.customersChange != null && stats.customersChange < 0}
         />
 
@@ -440,7 +461,11 @@ function OverviewPanel({
           label="Churn rate"
           value={`${stats.churnRate}%`}
           from={stats.churnFrom != null ? `${stats.churnFrom}%` : "—"}
-          badge={stats.churnChange != null ? Math.abs(stats.churnChange).toFixed(1) : "New"}
+          badge={
+            stats.churnChange != null
+              ? Math.abs(stats.churnChange).toFixed(1)
+              : "New"
+          }
           decrease={stats.churnChange != null && stats.churnChange > 0}
           suffix="pp"
         />
@@ -518,7 +543,7 @@ function OverviewPanel({
             <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
           </Link>
         </div>
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 text-center overflow-x-auto">
           <table className="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-800">
             <thead className="ltr:text-left rtl:text-right">
               <tr>
@@ -554,81 +579,6 @@ function OverviewPanel({
           </table>
         </div>
       </motion.section>
-    </div>
-  );
-}
-
-function CustomersPanel({ customers }) {
-  return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={spring}
-        className="flex items-center justify-between flex-wrap gap-3"
-      >
-        <div>
-          <span className="text-xs tracking-[0.3em] text-brand-600 dark:text-brand-400 font-semibold uppercase">
-            YOUR AUDIENCE
-          </span>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-            Customers
-          </h1>
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...spring, delay: 0.05 }}
-        className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 sm:p-6 shadow-sm overflow-x-auto"
-      >
-        <table className="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-800">
-          <thead className="ltr:text-left rtl:text-right">
-            <tr>
-              {["Customer", "Orders", "Items", "Total spent", "Status"].map(
-                (h) => (
-                  <th
-                    key={h}
-                    className="px-3 py-2 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    {h}
-                  </th>
-                ),
-              )}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
-            {customers.map((c) => (
-              <tr
-                key={c.id || c.name}
-                className="*:text-gray-900 dark:*:text-gray-100"
-              >
-                <td className="px-3 py-2 whitespace-nowrap font-medium">
-                  <span className="flex items-center gap-2.5">
-                    <span className="grid size-8 place-content-center rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-700 dark:text-brand-400 text-xs font-bold">
-                      {getInitials(c.name)}
-                    </span>
-                    {c.name}
-                  </span>
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap">
-                  {c.orders ?? (c.id ? 1 : "—")}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap">
-                  {c.items ?? "—"}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap">
-                  {formatMoney(c.total ?? c.spent, 2)}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap">
-                  {c.status ? <StatusPill status={c.status} /> : "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </motion.div>
     </div>
   );
 }
@@ -837,7 +787,7 @@ export default function SellerDashboard() {
   } = useApp();
   const { loggedIn, setLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
-  console.log("seller orders:", sellerOrders);
+  // console.log("seller orders:", sellerOrders);
   const [searchParams, setSearchParams] = useSearchParams();
   const active = searchParams.get("tab") || "overview";
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -891,6 +841,10 @@ export default function SellerDashboard() {
     () => buildCustomerRows(sellerOrders, customer),
     [sellerOrders, customer],
   );
+  const newCustomers = useMemo(
+    () => buildNewCustomersSeries(sellerOrders, "6m"),
+    [sellerOrders],
+  );
 
   if (!loggedIn.status) return null;
 
@@ -933,11 +887,11 @@ export default function SellerDashboard() {
         />
 
         <div className="min-w-0 flex-1">
-          <DashboardHeader
+          {/* <DashboardHeader
             title={title}
             onMenuClick={() => setSidebarOpen(true)}
             onNewReport={handleNewReport}
-          />
+          /> */}
 
           <AnimatePresence mode="wait">
             {active === "overview" && (
@@ -974,7 +928,12 @@ export default function SellerDashboard() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={spring}
               >
-                <CustomersPanel customers={customers} />
+                <CustomersPanel
+                  customers={customers}
+                  newCustomers={newCustomers}
+                  dark={darkMode}
+                  setToast={setToast}
+                />
               </motion.main>
             )}
 

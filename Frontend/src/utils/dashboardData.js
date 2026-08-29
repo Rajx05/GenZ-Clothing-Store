@@ -53,6 +53,25 @@ export function buildRevenueSeries(orders = [], period = "6m") {
   return { labels, values };
 }
 
+export function buildNewCustomersSeries(orders = [], period = "6m") {
+  const n = period === "12m" ? 12 : 6;
+  const labels = lastNMonthLabels(n);
+  if (!orders || orders.length === 0)
+    return { labels, values: Array(n).fill(0) };
+  const now = new Date();
+  const values = labels.map((_, i) => {
+    const month = new Date(now.getFullYear(), now.getMonth() - (n - 1 - i), 1);
+    const ids = new Set(
+      orders
+        .filter((o) => o.createdAt && sameMonth(o.createdAt, month))
+        .map((o) => o.user?._id || o.user?.username)
+        .filter(Boolean),
+    );
+    return ids.size;
+  });
+  return { labels, values };
+}
+
 export function buildStatusBreakdown(orders = []) {
   if (!orders || orders.length === 0) {
     return { labels: ["Paid", "Pending", "Refunded"], values: [0, 0, 0] };
