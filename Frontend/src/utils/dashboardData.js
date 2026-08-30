@@ -101,29 +101,49 @@ export function buildRecentOrders(orders = [], customer = "You", limit = 4) {
             ? "Refunded"
             : "Pending",
       amount: o.totalAmount || 0,
+      date: o.createdAt,
     }));
 }
 
 export function buildCustomerRows(orders = [], customer = "You") {
   if (!orders || orders.length === 0) return [];
-  const rows = orders
-    .filter((o) => o.createdAt)
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .map((o) => ({
-      id: o.razorpayOrderId || o._id,
-      name: o.user?.username || customer,
-      email: o.user?.email || "",
-      total: o.totalAmount || 0,
-      items: (o.items || []).reduce((n, it) => n + (it.quantity || 1), 0),
-      date: o.createdAt,
-      status:
+  const byCustomer = new Map();
+  for (const o of orders) {
+    if (!o.createdAt) continue;
+    const key = o.user?._id || o.user?.username || o.razorpayOrderId || o._id;
+    const existing = byCustomer.get(key);
+    if (!existing) {
+      byCustomer.set(key, {
+        id: o.user?._id || o.user?.username || o.razorpayOrderId || o._id,
+        name: o.user?.username || customer,
+        email: o.user?.email || "",
+        total: 0,
+        items: 0,
+        date: o.createdAt,
+        status:
+          o.paymentStatus === "Paid"
+            ? "Paid"
+            : o.paymentStatus === "Failed"
+              ? "Refunded"
+              : "Pending",
+      });
+    }
+    const row = byCustomer.get(key);
+    row.total += o.totalAmount || 0;
+    row.items += (o.items || []).reduce((n, it) => n + (it.quantity || 1), 0);
+    if (new Date(o.createdAt) > new Date(row.date)) {
+      row.date = o.createdAt;
+      row.status =
         o.paymentStatus === "Paid"
           ? "Paid"
           : o.paymentStatus === "Failed"
             ? "Refunded"
-            : "Pending",
-    }));
-  return rows;
+            : "Pending";
+    }
+  }
+  return Array.from(byCustomer.values()).sort(
+    (a, b) => new Date(b.date) - new Date(a.date),
+  );
 }
 
 export function computeStats(orders = []) {
@@ -161,7 +181,8 @@ export function computeStats(orders = []) {
   };
 
   const activeCustomers = uniqueCustomers(currentOrders);
-  const customersFrom = previousOrders.length > 0 ? uniqueCustomers(previousOrders) : 0;
+  const customersFrom =
+    previousOrders.length > 0 ? uniqueCustomers(previousOrders) : 0;
 
   const churnForPeriod = (periodOrders) => {
     if (periodOrders.length === 0) return null;
@@ -196,3 +217,12 @@ export const formatMoney = (value, digits = 0) =>
     minimumFractionDigits: digits,
     maximumFractionDigits: digits,
   }).format(Number(value) || 0);
+
+export const formatDate = (value) =>
+  value
+    ? new Date(value).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+    : "—";

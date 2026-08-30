@@ -1,10 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUserPlus,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,7 +10,6 @@ import {
   Tooltip,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { getInitials } from "../profile/Avatar";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -72,7 +68,7 @@ function NewCustomersChart({ series, dark }) {
   );
 }
 
-function CustomersPanel({ customers, newCustomers, dark, setToast }) {
+function CustomersPanel({ customers, newCustomers, dark }) {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -84,12 +80,6 @@ function CustomersPanel({ customers, newCustomers, dark, setToast }) {
         (c.email || "").toLowerCase().includes(term),
     );
   }, [customers, query]);
-  const handleAddCustomer = () => {
-    setToast?.({
-      message: "Adding customers manually is coming soon.",
-      type: "info",
-    });
-  };
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
@@ -110,16 +100,6 @@ function CustomersPanel({ customers, newCustomers, dark, setToast }) {
             See who has shopped your catalog at a glance.
           </p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          onClick={handleAddCustomer}
-          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
-        >
-          <FontAwesomeIcon icon={faUserPlus} className="size-3.5" />
-          Add customer
-        </motion.button>
       </motion.div>
 
       <motion.section

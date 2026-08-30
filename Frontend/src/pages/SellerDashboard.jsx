@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,7 +13,6 @@ import {
   faCircleQuestion,
   faRightFromBracket,
   faBars,
-  faPlus,
   faReceipt,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
@@ -44,6 +43,7 @@ import {
   buildNewCustomersSeries,
   computeStats,
   formatMoney,
+  formatDate,
 } from "../utils/dashboardData";
 
 ChartJS.register(
@@ -178,9 +178,9 @@ function SellerSidebar({ user, active, onSelect, onLogout, open, onClose }) {
   );
 }
 
-function DashboardHeader({ title, onMenuClick, onNewReport }) {
+function DashboardHeader({ title, onMenuClick }) {
   return (
-    <header className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-950/95 backdrop-blur px-4 sm:px-6 py-4 lg:top-20">
+    <header className="sticky top-16 z-20 flex items-center justify-between border-b border-gray-200 dark:border-gray-800 transition-all duration-300 px-4 sm:px-6 py-4 lg:top-20 bg-white dark:bg-gray-950 ">
       <div className="flex items-center gap-4">
         <button
           type="button"
@@ -193,16 +193,6 @@ function DashboardHeader({ title, onMenuClick, onNewReport }) {
         <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {title}
         </h1>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          onClick={() => {}}
-          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          ADD PRODUCT
-        </motion.button>
       </div>
     </header>
   );
@@ -422,6 +412,7 @@ function OverviewPanel({
   statusBreakdown,
   recentOrders,
   dark,
+  onViewOrders,
 }) {
   const [range, setRange] = useState("6m");
 
@@ -535,19 +526,20 @@ function OverviewPanel({
           <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100">
             Recent orders
           </h2>
-          <Link
-            to="/my-orders"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors"
+          <button
+            type="button"
+            onClick={onViewOrders}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition-colors cursor-pointer"
           >
             View all{" "}
             <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />
-          </Link>
+          </button>
         </div>
         <div className="mt-4 text-center overflow-x-auto">
           <table className="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-800">
             <thead className="ltr:text-left rtl:text-right">
               <tr>
-                {["Customer", "Order", "Status", "Amount"].map((h) => (
+                {["Customer", "Order", "Status", "Amount", "Date"].map((h) => (
                   <th
                     key={h}
                     className="px-3 py-2 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100"
@@ -572,6 +564,9 @@ function OverviewPanel({
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     {formatMoney(row.amount, 2)}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {formatDate(row.date)}
                   </td>
                 </tr>
               ))}
@@ -610,10 +605,10 @@ function OrdersPanel({ orders, customer }) {
         transition={{ ...spring, delay: 0.05 }}
         className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5 sm:p-6 shadow-sm overflow-x-auto"
       >
-        <table className="min-w-full divide-y-2 divide-gray-200 dark:divide-gray-800">
+        <table className="min-w-full text-center divide-y-2 divide-gray-200 dark:divide-gray-800">
           <thead className="ltr:text-left rtl:text-right">
             <tr>
-              {["Order", "Customer", "Status", "Amount"].map((h) => (
+              {["Order", "Customer", "Status", "Amount", "Date"].map((h) => (
                 <th
                   key={h}
                   className="px-3 py-2 whitespace-nowrap font-medium text-gray-900 dark:text-gray-100"
@@ -635,6 +630,9 @@ function OrdersPanel({ orders, customer }) {
                 </td>
                 <td className="px-3 py-2 whitespace-nowrap">
                   {formatMoney(row.amount, 2)}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap">
+                  {formatDate(row.date)}
                 </td>
               </tr>
             ))}
@@ -707,7 +705,7 @@ function BillingPanel({ orders }) {
         ))}
       </div>
 
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring, delay: 0.15 }}
@@ -769,7 +767,7 @@ function BillingPanel({ orders }) {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }
@@ -887,11 +885,11 @@ export default function SellerDashboard() {
         />
 
         <div className="min-w-0 flex-1">
-          {/* <DashboardHeader
+          <DashboardHeader
             title={title}
             onMenuClick={() => setSidebarOpen(true)}
             onNewReport={handleNewReport}
-          /> */}
+          />
 
           <AnimatePresence mode="wait">
             {active === "overview" && (
@@ -915,6 +913,10 @@ export default function SellerDashboard() {
                     statusBreakdown={statusBreakdown}
                     recentOrders={recentOrders}
                     dark={darkMode}
+                    onViewOrders={() => {
+                      window.scrollTo(0, 0);
+                      setSearchParams({ tab: "orders" });
+                    }}
                   />
                 )}
               </motion.main>

@@ -419,13 +419,63 @@ function ProductFormModal({ initial, onSave, onClose, submitting }) {
   );
 }
 
+function DeleteConfirmModal({ product, onCancel, onConfirm, deleting }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 p-4"
+      onClick={onCancel}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 30, scale: 0.97 }}
+        transition={spring}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-2xl"
+      >
+        <h2 className="font-display text-lg font-bold text-gray-900 dark:text-gray-100">
+          Delete product?
+        </h2>
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          Are you sure you want to remove{" "}
+          <span className="font-semibold text-gray-900 dark:text-gray-100">
+            {product?.name}
+          </span>{" "}
+          from your catalog?
+        </p>
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={deleting}
+            className="px-5 py-2.5 rounded-xl text-xs font-semibold tracking-wider border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            CANCEL
+          </button>
+          <motion.button
+            whileHover={{ scale: deleting ? 1 : 1.02 }}
+            whileTap={{ scale: deleting ? 1 : 0.98 }}
+            type="button"
+            onClick={() => onConfirm(product)}
+            disabled={deleting}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white rounded-xl text-xs font-semibold tracking-wider shadow-lg hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {deleting && (
+              <FontAwesomeIcon icon={faSpinner} spin className="text-[10px]" />
+            )}
+            {deleting ? "DELETING..." : "DELETE"}
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export default function ProductsPanel({ setToast }) {
-  const {
-    sellerProducts,
-    setSellerProducts,
-    getSellerProducts,
-    updateSellerProduct,
-  } = useApp();
+  const { sellerProducts, getSellerProducts, updateSellerProduct } = useApp();
 
   useEffect(() => {
     getSellerProducts();
@@ -438,6 +488,8 @@ export default function ProductsPanel({ setToast }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const stats = useMemo(() => {
     if (total !== 0) {
@@ -539,18 +591,22 @@ export default function ProductsPanel({ setToast }) {
 
   const handleDelete = async (product) => {
     try {
+      setDeleting(true);
       await axiosPrivate.delete(`/seller-products/${product._id}`);
       await getSellerProducts();
       setToast?.({
         message: `"${product.name}" removed from your catalog.`,
         type: "info",
       });
+      setDeleteTarget(null);
     } catch (error) {
       console.error("Error deleting product:", error);
       setToast?.({
         message: "Failed to delete product. Please try again.",
         type: "error",
       });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -563,36 +619,6 @@ export default function ProductsPanel({ setToast }) {
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
-      {/* Header */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={spring}
-        className="flex items-start justify-between flex-wrap gap-4"
-      >
-        <div>
-          <span className="text-xs tracking-[0.3em] text-brand-600 dark:text-brand-400 font-semibold uppercase">
-            YOUR CATALOG
-          </span>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-            Products
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1.5">
-            Manage the pieces you sell. Add new listings or edit existing ones.
-          </p>
-        </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          onClick={openAdd}
-          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          ADD PRODUCT
-        </motion.button>
-      </motion.div> */}
-
       {/* Mini stats */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -620,32 +646,35 @@ export default function ProductsPanel({ setToast }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ...spring, delay: 0.1 }}
-        className="sticky top-20 dark:bg-slate-950 bg-white p-2 z-20 flex flex-col sm:flex-row sm:items-center gap-4"
+        className="sticky top-32 bg-white/95 dark:bg-gray-950/95 backdrop-blur p-2 z-20 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4"
       >
-        {/* Search bar */}
-        <div className="relative flex-1">
-          <FontAwesomeIcon
-            icon={faMagnifyingGlass}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400"
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products..."
-            className={`${inputCls()} pl-10`}
-          />
+        {/* Search + add product */}
+        <div className="flex items-center gap-3 sm:flex-1">
+          <div className="relative flex-1">
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400"
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search products..."
+              className={`${inputCls()} pl-10`}
+            />
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="button"
+            onClick={openAdd}
+            className="inline-flex items-center gap-2 shrink-0 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+            ADD PRODUCT
+          </motion.button>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="button"
-          onClick={openAdd}
-          className="inline-flex items-center gap-2 rounded-xl bg-gray-900 dark:bg-white px-5 py-3 text-xs font-semibold tracking-wider text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          ADD PRODUCT
-        </motion.button>
+        {/* Filters */}
         <div className="flex gap-2 overflow-x-auto custom-scrollbar pb-1">
           {STOCK_META.map((f) => {
             const selected = filter === f.id;
@@ -718,7 +747,7 @@ export default function ProductsPanel({ setToast }) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDelete(product)}
+                      onClick={() => setDeleteTarget(product)}
                       aria-label={`Delete ${product.name}`}
                       className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-red-500 shadow-lg hover:scale-110 transition"
                     >
@@ -780,6 +809,18 @@ export default function ProductsPanel({ setToast }) {
               setModalOpen(false);
               setEditing(null);
             }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Delete confirm modal */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <DeleteConfirmModal
+            product={deleteTarget}
+            deleting={deleting}
+            onCancel={() => setDeleteTarget(null)}
+            onConfirm={handleDelete}
           />
         )}
       </AnimatePresence>
