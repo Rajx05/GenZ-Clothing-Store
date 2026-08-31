@@ -43,7 +43,7 @@ const deleteImage = async (publicId) => {
 
 const createImageUrl = async (publicId) => {
   let imageUrl = cloudinary.url(publicId, {
-    transformation: [{ quality: "auto" }, { fetch_format: "auto" }],
+    transformation: [{ quality: "auto" }, { fetch_format: "webp" }],
   });
 
   return imageUrl;
@@ -148,7 +148,17 @@ export const updateProduct = async (req, res) => {
         .json({ message: "Product not found or not owned by you" });
     }
 
-    const updatable = ["name", "description", "price", "originalPrice", "category", "sizes", "colors", "stock", "badge"];
+    const updatable = [
+      "name",
+      "description",
+      "price",
+      "originalPrice",
+      "category",
+      "sizes",
+      "colors",
+      "stock",
+      "badge",
+    ];
     for (const field of updatable) {
       if (data[field] !== undefined) {
         product[field] = data[field];
