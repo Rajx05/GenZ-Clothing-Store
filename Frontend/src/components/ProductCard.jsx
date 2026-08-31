@@ -6,15 +6,22 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import useApp from "../hooks/useApp";
 import { StarRating } from "./StarRating";
+import { AdvancedImage, lazyload, responsive } from "@cloudinary/react";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
 
 export const ProductCard = React.memo(
   forwardRef(function ProductCard({ product }, ref) {
-    const { addToCart, toggleWishlist, wishlist } = useApp();
+    const { addToCart, toggleWishlist, wishlist, cld } = useApp();
     const navigate = useNavigate();
     const [selectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(0);
     const [imageLoaded, setImageLoaded] = useState(false);
     const isWished = wishlist && wishlist.includes(product._id);
+
+    const myImage = cld
+      .image(product.image[0].public_id)
+      .resize(fill().width(300).height(400).gravity(autoGravity()));
 
     return (
       <div ref={ref} className="group">
@@ -24,12 +31,10 @@ export const ProductCard = React.memo(
           onClick={() => navigate(`/product/${product._id}`)}
         >
           {!imageLoaded && <div className="absolute inset-0 skeleton"></div>}
-          <img
-            src={product.image[0].url}
-            alt={product.name}
-            className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          <AdvancedImage
+            cldImg={myImage}
+            plugins={[responsive({ steps: [800, 1000, 1400] }), lazyload()]}
             onLoad={() => setImageLoaded(true)}
-            loading="lazy"
           />
 
           {/* Badge */}
@@ -124,7 +129,8 @@ export const ProductCard = React.memo(
             )}
             {product.originalPrice && (
               <span className="text-xs text-red-500 font-semibold">
-                -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+                -{Math.round((1 - product.price / product.originalPrice) * 100)}
+                %
               </span>
             )}
           </div>

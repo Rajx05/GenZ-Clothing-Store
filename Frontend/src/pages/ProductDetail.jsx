@@ -17,10 +17,15 @@ import { StarRating } from "../components/StarRating";
 import { Skeleton } from "../components/Skeleton";
 import axios from "../api/axios";
 
+// cloudinary
+import { AdvancedImage, lazyload, responsive } from "@cloudinary/react";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart, toggleWishlist, wishlist } = useApp();
+  const { addToCart, toggleWishlist, wishlist, cld } = useApp();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -131,10 +136,9 @@ export default function ProductDetail() {
 
   const isWished = wishlist && wishlist.includes(product._id);
 
-  // Get related products from same category
-  // const relatedProducts = product
-  //   .filter((p) => p.category === p.category && p._id !== p._id)
-  //   .slice(0, 4);
+  const myImage = cld
+    .image(product.image[0].public_id)
+    .resize(fill().width(300).height(400).gravity(autoGravity()));
 
   return (
     <div className="py-4 md:py-6">
@@ -183,10 +187,9 @@ export default function ProductDetail() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center">
           {/* Left Column: Image */}
           <div className="w-full max-w-md mx-auto lg:max-w-none lg:w-[400px] xl:w-[440px] shrink-0 relative rounded-3xl overflow-hidden bg-gray-100 dark:bg-gray-800 shadow-xl group aspect-[3/4] lg:h-[500px] xl:h-[540px] lg:aspect-auto">
-            <img
-              src={product.image[0].url}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            <AdvancedImage
+              cldImg={myImage}
+              plugins={[responsive({ steps: 200 }), lazyload()]}
             />
             {product.badge && (
               <span
@@ -351,25 +354,6 @@ export default function ProductDetail() {
             </div>
           </div>
         </div>
-
-        {/* Related Products Section */}
-        {/* {relatedProducts.length > 0 && (
-          <div className="mt-20 pt-16 border-t border-gray-100 dark:border-gray-800">
-            <div className="mb-10 text-center">
-              <span className="text-xs tracking-[0.3em] text-brand-600 dark:text-brand-400 font-semibold uppercase">
-                Customers Also Liked
-              </span>
-              <h2 className="font-display text-3xl font-bold mt-2">
-                Related Products
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {relatedProducts.map((p, i) => (
-                <ProductCard key={p._id} product={p} index={i} />
-              ))}
-            </div>
-          </div>
-        )} */}
       </div>
     </div>
   );

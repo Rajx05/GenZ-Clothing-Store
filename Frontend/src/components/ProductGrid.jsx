@@ -51,20 +51,6 @@ export function ProductGrid() {
       className="py-12 md:py-6 bg-gray-50/50 dark:bg-gray-900/50"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-10"
-        >
-          <span className="text-xs tracking-[0.3em] text-brand-600 dark:text-brand-400 font-medium">
-            CURATED FOR YOU
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mt-2">
-            Our Collection
-          </h2>
-        </motion.div> */}
-
         {/* Filters & Sort */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div className="flex flex-wrap gap-2">

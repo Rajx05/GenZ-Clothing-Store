@@ -4,6 +4,7 @@ import axiosPrivate from "../api/axiosPrivate";
 import heroImgDesktop from "../images/hero.webp";
 import heroImgMobile from "../images/jonas-horsch.webp";
 import { useNavigate } from "react-router-dom";
+import { Cloudinary } from "@cloudinary/url-gen";
 
 const AppContext = createContext({});
 
@@ -102,6 +103,13 @@ export const AppProvider = ({ children }) => {
   const [order, setOrder] = useState([]);
   const [orderLoading, setOrderLoading] = useState(false);
 
+  // Create and configure your Cloudinary instance.
+  const cld = new Cloudinary({
+    cloud: {
+      cloudName: "xhqfkqtz",
+    },
+  });
+
   //------------------------------ functions--------------------------//
 
   const toggleDark = useCallback(() => setDarkMode((prev) => !prev), []);
@@ -175,24 +183,27 @@ export const AppProvider = ({ children }) => {
     },
   );
 
-  const updateQuantity = useCallback(async (itemId, newQty) => {
-    if (newQty < 1) return;
-    // Optimistic update for instant UI feedback
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item._id === itemId ? { ...item, quantity: newQty } : item,
-      ),
-    );
-    try {
-      await axiosPrivate.put("/cart/update-quantity", {
-        itemId,
-        quantity: newQty,
-      });
-    } catch (error) {
-      console.error("Failed to update quantity", error);
-      fetchCartItems(); // roll back to the server's version
-    }
-  }, [fetchCartItems]);
+  const updateQuantity = useCallback(
+    async (itemId, newQty) => {
+      if (newQty < 1) return;
+      // Optimistic update for instant UI feedback
+      setCartItems((prev) =>
+        prev.map((item) =>
+          item._id === itemId ? { ...item, quantity: newQty } : item,
+        ),
+      );
+      try {
+        await axiosPrivate.put("/cart/update-quantity", {
+          itemId,
+          quantity: newQty,
+        });
+      } catch (error) {
+        console.error("Failed to update quantity", error);
+        fetchCartItems(); // roll back to the server's version
+      }
+    },
+    [fetchCartItems],
+  );
 
   const removeFromCart = useCallback(async (productId) => {
     // console.log(productId);
@@ -282,7 +293,10 @@ export const AppProvider = ({ children }) => {
           formData.append(key, value);
         }
       }
-      const response = await axiosPrivate.put(`/seller-products/${productId}`, formData);
+      const response = await axiosPrivate.put(
+        `/seller-products/${productId}`,
+        formData,
+      );
       return response.data.product;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -432,6 +446,7 @@ export const AppProvider = ({ children }) => {
       setOrder,
       orderLoading,
       fetchOrders,
+      cld,
     }),
     [
       darkMode,
@@ -462,13 +477,12 @@ export const AppProvider = ({ children }) => {
       fetchCartItems,
       createOrder,
       fetchOrders,
+      cld,
     ],
   );
 
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
 };
 

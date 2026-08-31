@@ -15,6 +15,12 @@ import {
 import { CATEGORIES } from "../../data/constants";
 import useApp from "../../hooks/useApp";
 
+// cloudinary
+import { AdvancedImage, responsive } from "@cloudinary/react";
+import { lazyload } from "@cloudinary/react";
+import { fill } from "@cloudinary/url-gen/actions/resize";
+import { autoGravity } from "@cloudinary/url-gen/qualifiers/gravity";
+
 const spring = { type: "spring", stiffness: 260, damping: 24 };
 
 const STOCK_META = [
@@ -475,7 +481,8 @@ function DeleteConfirmModal({ product, onCancel, onConfirm, deleting }) {
 }
 
 export default function ProductsPanel({ setToast }) {
-  const { sellerProducts, getSellerProducts, updateSellerProduct } = useApp();
+  const { sellerProducts, getSellerProducts, updateSellerProduct, cld } =
+    useApp();
 
   useEffect(() => {
     getSellerProducts();
@@ -710,11 +717,16 @@ export default function ProductsPanel({ setToast }) {
                 className="group relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 shadow-sm"
               >
                 <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
-                  <img
-                    src={product.image[0].url}
-                    alt={product.name}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
+                  <AdvancedImage
+                    cldImg={cld
+                      .image(product.image[0].public_id)
+                      .resize(
+                        fill().width(300).height(400).gravity(autoGravity()),
+                      )}
+                    plugins={[
+                      responsive({ steps: [800, 1000, 1400] }),
+                      lazyload(),
+                    ]}
                   />
                   {product.badge && (
                     <span
