@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
-      {/* <FeaturesBar /> */}
+
       {/* Featured Products Section */}
       <section className="py-16 md:py-20 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">

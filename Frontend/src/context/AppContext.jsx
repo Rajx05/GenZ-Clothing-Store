@@ -3,6 +3,8 @@ import axios from "../api/axios.js";
 import axiosPrivate from "../api/axiosPrivate";
 import heroImgDesktop from "../images/hero.webp";
 import heroImgMobile from "../images/jonas-horsch.webp";
+import productsImageDesktop from "../images/products.webp";
+import overviewImageDesktop from "../images/overview.webp";
 import { useNavigate } from "react-router-dom";
 import { Cloudinary } from "@cloudinary/url-gen";
 
@@ -406,6 +408,8 @@ export const AppProvider = ({ children }) => {
     () => ({
       heroImgDesktop,
       heroImgMobile,
+      productsImageDesktop,
+      overviewImageDesktop,
       darkMode,
       setDarkMode,
       toggleDark,
