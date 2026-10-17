@@ -108,21 +108,6 @@ export default function Auth() {
   const [resendLoading, setResendLoading] = useState(false);
 
   const cardRef = useRef(null);
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      const timer = setTimeout(() => {
-        cardRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }, 120);
-      return () => clearTimeout(timer);
-    }
-  }, [view]);
 
   // ── Resend OTP countdown
   useEffect(() => {
@@ -316,7 +301,7 @@ export default function Auth() {
     } focus:ring-2 focus:ring-brand-500 outline-none text-sm text-gray-900 dark:text-white transition`;
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6">
+    <div className="min-h-[30vh] flex items-center justify-center py-2 px-4 sm:px-6">
       <div
         ref={cardRef}
         className="max-w-5xl w-full bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row border border-gray-200 dark:border-gray-800"
@@ -357,7 +342,7 @@ export default function Auth() {
         </div>
 
         {/* ── Right Form Panel ── */}
-        <div className="w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center bg-white dark:bg-gray-900">
+        <div className="w-full md:w-1/2 p-4 sm:p-12 flex flex-col justify-center bg-white dark:bg-gray-900">
           <div className="max-w-md w-full mx-auto">
             <AnimatePresence mode="wait">
               {/* ════ LOGIN ════ */}

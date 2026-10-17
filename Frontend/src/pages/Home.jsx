@@ -98,7 +98,6 @@ export default function Home() {
       <CategoriesSection />
 
       <TestimonialsSection />
-      <InstagramSection />
       <NewsletterSection />
     </div>
   );

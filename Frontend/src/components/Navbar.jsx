@@ -72,7 +72,7 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16 md:h-20">
+          <div className="flex items-center justify-between h-14 md:h-18">
             {/* Mobile menu button */}
             <button
               className="md:hidden p-2 -ml-2"
@@ -252,8 +252,8 @@ export function Navbar() {
               exit={{ height: 0, opacity: 0 }}
               className="border-t border-gray-200 dark:border-gray-800 overflow-hidden"
             >
-              <div className="max-w-2xl mx-auto px-4 py-4">
-                <div className="flex items-center gap-3">
+              <div className="max-w-2xl mx-auto px-4 py-3">
+                <div className="flex items-center gap-3 h-10 ">
                   <form onSubmit={handleSearch} className="relative flex-1">
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
